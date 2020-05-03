@@ -1,25 +1,40 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Rating = (props:any) => <li>{props.label} -- {props.value}</li>
+const Rating = (props:any) => (
+  // <li>{props.label} -- {props.value}</li>
+  <tr>
+    <td>{props.label}</td>
+    <td>{props.value.toLocaleString(undefined, {maximumFractionDigits:2})}</td>
+  </tr>
+)
 const Metrics = (props:any) => {
   const {good, neutral, bad} = props
-  const total = good + neutral + bad
-  const avg = (good - bad) / (total)
-  const positive = (good / total) * 100.0
+  const total:number = good + neutral + bad
+  const avg:number = (good - bad) / (total)
+  const positive:number = (good / total) * 100.0
 
   // No feedback given
   if (total === 0) return <p>No feedback to display</p>
 
   return (
-    <ul>
-      <Rating label="good" value={good} />
-      <Rating label="neutral" value={neutral} />
-      <Rating label="bad" value={bad} />
-      <Rating label="all" value={total} />
-      <Rating label="average" value={avg} />
-      <Rating label="positive" value={positive} />
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <Rating label="good" value={good} />
+        <Rating label="neutral" value={neutral} />
+        <Rating label="bad" value={bad} />
+        <Rating label="all" value={total} />
+        <Rating label="average" value={avg} />
+        <Rating label="positive" value={positive} />
+      </tbody>
+      <tfoot></tfoot>
+    </table>
   )
 }
 const RateButton = (props:any) => (
