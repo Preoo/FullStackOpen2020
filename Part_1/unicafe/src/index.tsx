@@ -7,6 +7,10 @@ const Metrics = (props:any) => {
   const total = good + neutral + bad
   const avg = (good - bad) / (total)
   const positive = (good / total) * 100.0
+
+  // No feedback given
+  if (total === 0) return <p>No feedback to display</p>
+
   return (
     <ul>
       <Rating label="good" value={good} />
