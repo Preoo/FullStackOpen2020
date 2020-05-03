@@ -24,7 +24,7 @@ const Metrics = (props:any) => {
 }
 const RateButton = (props:any) => (
   <button onClick={props.cb}>
-    {props.rating}
+    {props.label}
   </button>
 )
 
@@ -37,9 +37,9 @@ const App = () => {
   return (
     <div>
       <h1>Rate unicafe</h1>
-      <RateButton rating="good" cb={() => set_good(good + 1)} />
-      <RateButton rating="neutral" cb={() => set_neutral(neutral + 1)} />
-      <RateButton rating="bad" cb={() => set_bad(bad + 1)} />
+      <RateButton label="good" cb={() => set_good(good + 1)} />
+      <RateButton label="neutral" cb={() => set_neutral(neutral + 1)} />
+      <RateButton label="bad" cb={() => set_bad(bad + 1)} />
       <h2>Statistics</h2>
       <Metrics good={good} neutral={neutral} bad={bad}/>
     </div>
