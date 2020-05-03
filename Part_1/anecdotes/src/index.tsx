@@ -15,8 +15,11 @@ const App = ({anecdotes}:Anecdotes) => {
     new_votes[selected] += 1
     setVotes(new_votes)
   }
+  const highest_voted = () => (votes.indexOf(Math.max(...votes)))
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>
         {anecdotes[selected]}
       </p>
@@ -25,6 +28,10 @@ const App = ({anecdotes}:Anecdotes) => {
       </p>
       <button onClick={get_next_anecdote}>next</button>
       <button onClick={set_vote}>vote</button>
+      <h2>Fan favorite</h2>
+      <p>
+        {anecdotes[highest_voted()]}
+      </p>
     </div>
   )
 }
