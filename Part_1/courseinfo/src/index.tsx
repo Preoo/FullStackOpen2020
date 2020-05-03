@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// Types
 type PartElement = {
   name:string,
   exercises:number,
@@ -10,6 +11,7 @@ type Course = {
   parts:PartElement[],
 }
 
+// Components
 const Header = ({name}:Course) => (
   <h1>{name}</h1>
 )
@@ -68,6 +70,7 @@ const App = () => {
   )
 }
 
+// Entrypoint
 ReactDOM.render
 (
   <App />,

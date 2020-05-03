@@ -15,3 +15,10 @@ This repository contains my efforts to work through FullStackOpen MOOC course ma
 _Problem_: After initializing react-app with `npx create-react-app app`, running `npm start` seems to do nothing useful.
 _Workaround_: run build scripts direct with command `node /node_modules/react-scripts/scripts/start.js` in project root directory.
 
+## Bootstrapping new project
+Go to corresponding Part\_n folder. Run command
+
+	npm init react-app  app-name-here --template typescript
+
+which will create a folder with supplied app-name in working directory and initilize the project. 
+
