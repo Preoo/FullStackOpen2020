@@ -1,71 +1,53 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-// Types
-type PartElement = {
-  name:string,
-  exercises:number,
-}
-type Course = {
-  name:string,
-  parts:PartElement[],
-}
-
-// Components
-const Header = ({name}:Course) => (
-  <h1>{name}</h1>
-)
-
-const Content = ({parts}:Course) => {
-  let course_content = []
-  for (const part of parts) {
-    course_content.push(<Part name={part.name} exercises={part.exercises} />)
-  }
-  return (
-    <div>
-      {course_content}
-    </div>
-  )
-}
-
-const Part = ({name, exercises}:PartElement) => (
-  <p>{name} {exercises}</p>
-)
-
-const Total = ({parts}:Course) => {
-  let total:number = 0
-
-  parts.forEach((part) => total += part.exercises)
-
-  return (
-    <p>Number of exercises: {total}</p>
-  )
-}
+import Courses from './components/Course'
 
 const App = () => {
-  const course = {
+  const course = [{
+    id: 1,
     name: 'Half Stack application development',
     parts: [
       {
         name: 'Fundamentals of React',
-        exercises: 10
+        exercises: 10,
+        id: 1,
       },
       {
         name: 'Using props to pass data',
-        exercises: 7
+        exercises: 7,
+        id: 2,
       },
       {
         name: 'State of a component',
-        exercises: 14
+        exercises: 14,
+        id: 3,
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4,
       },
     ]
-  }
+  }, {
+    id: 2,
+    name: 'Node.js',
+    parts: [
+      {
+        name: 'Routing',
+        exercises: 3,
+        id: 1,
+      },
+      {
+        name: 'Middlewares',
+        exercises: 7,
+        id: 2,
+      }
+    ]
+  }]
 
   return (
     <div>
-      <Header {...course} />
-      <Content {...course} />
-      <Total {...course} />
+      <Courses courses={course}/>
     </div>
   )
 }
