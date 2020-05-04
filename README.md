@@ -14,6 +14,7 @@ This repository contains my efforts to work through FullStackOpen MOOC course ma
 ## Notes, Problems and Workarounds!
 _Problem_: After initializing react-app with `npx create-react-app app`, running `npm start` seems to do nothing useful.
 _Workaround_: run build scripts direct with command `node /node_modules/react-scripts/scripts/start.js` in project root directory.
+_Root cause_: using config switch `--ignore-scripts` to mitigate security issues with malicious postinstall scripts will ignore all scripts in package.json. This includes "start", "build", "test", .. and friends.
 
 ## Bootstrapping new project
 Go to corresponding Part\_n folder. Run command
