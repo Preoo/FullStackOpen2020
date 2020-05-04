@@ -1,18 +1,37 @@
 import React, { useState } from 'react'
 
+type Contact = {name:string, number:string}
+// Filters
+const filter_existing = (phonebook:Contact[], contact:Contact): boolean =>
+  phonebook.find(person => person.name === contact.name) === undefined
+const filter_has_number = (phonebook:Contact[], contact:Contact): boolean =>
+  contact.number.length ? true : false
+
+type ContactProps = {phonebook:Contact[], filter:string}
+const Contacts = (props:ContactProps) => {
+  const phonebook = props.phonebook
+  const filter_name = props.filter.toLowerCase()
+  return (
+    <div>
+      {phonebook
+        .filter(contact => contact.name.toLowerCase().includes(filter_name))
+        .map(contact =>
+          <p key={contact.name}>{contact.name} : {contact.number}</p>
+      )}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '123-4567890' }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  
-  type Contact = {name:string, number:string}
-  // Filters
-  const filter_existing = (phonebook:Contact[], contact:Contact): boolean =>
-    phonebook.find(person => person.name === contact.name) === undefined
-  const filter_has_number = (phonebook:Contact[], contact:Contact): boolean =>
-    contact.number.length ? true : false
+  const [newFilter, setNewFilter] = useState('')
   
   const add_person = (event:any) => {
     event.preventDefault()
@@ -51,9 +70,10 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(contact =>
-        <p key={contact.name}>{contact.name} : {contact.number}</p>
-      )}
+      <div>
+        <input value={newFilter} onChange={(event:any) => setNewFilter(event.target.value)}/>
+        <Contacts phonebook={persons} filter={newFilter} />
+      </div>
     </div>
   )
 }
