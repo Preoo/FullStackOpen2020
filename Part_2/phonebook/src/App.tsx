@@ -11,9 +11,11 @@ const App = () => {
     setPersons([...persons, {name: newName}])
     setNewName('')
   }
+
   const on_name_change = (event:any) => (
     setNewName(event.target.value)
   )
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -27,7 +29,7 @@ const App = () => {
       </form>
       <h2>Names</h2>
       {persons.map(person =>
-        <p>{person.name}</p>
+        <p key={person.name}>{person.name}</p>
       )}
     </div>
   )
