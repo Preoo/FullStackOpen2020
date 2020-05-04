@@ -8,7 +8,11 @@ const App = () => {
 
   const add_person = (event:any) => {
     event.preventDefault()
-    setPersons([...persons, {name: newName}])
+    if (persons.find(person => person.name === newName)) {
+      alert(`${newName} is already recorded`)
+    } else {
+      setPersons([...persons, {name: newName}])
+    }
     setNewName('')
   }
 
