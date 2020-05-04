@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 // Filters
 const filter_existing = (phonebook: Contact[], contact: Contact): boolean =>
@@ -44,15 +45,16 @@ const Form = (props: any) => {
 
 const App = () => {
   // State
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+  const [persons, setPersons] = useState([] as Contact[]) // Appease TS error:
+  const [newName, setNewName] = useState('')              //  Type * is not assignable to
+  const [newNumber, setNewNumber] = useState('')          //  parameter of type 'SetStateAction<never[]>'
   const [newFilter, setNewFilter] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(res => setPersons(res.data))
+  }, [])
 
   // Event handlers
   const add_person = (event: any) => {
@@ -63,7 +65,7 @@ const App = () => {
     const errors = filters.map(f => f(persons, contact))
 
     if (errors.every(err => err)) {
-      setPersons(persons.concat(contact))
+      setPersons([...persons, contact])
     } else {
       errors.forEach((ok, i) => { if (!ok) alert(messages[i]) })
     }
