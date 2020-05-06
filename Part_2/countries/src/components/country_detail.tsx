@@ -15,18 +15,18 @@ export const CountryDetail = (props: Country) => {
                 </ul>
                 {
                     flag
-                    ? <img src={flag} height='50px' alt={`National flag of ${name}.`}/>
-                    : null
+                        ? <img src={flag} height='50px' alt={`National flag of ${name}.`} />
+                        : null
                 }
                 <p>{area}</p>
                 <p>{capital}</p>
                 <p>{population}</p>
 
-                { name 
-                    ? <Weather  {...props}/>
-                    : null 
+                {name
+                    ? <Weather  {...props} />
+                    : null
                 }
-                
+
             </div>
         )
     } else { return null }

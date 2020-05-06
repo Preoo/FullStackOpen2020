@@ -14,8 +14,7 @@ const App = () => {
   const [all_countries, update_all_countries] = useState([] as Country[])
   const [filter_string, set_filter_string] = useState('')
   const [countries, set_countries] = useState(all_countries)
-  const [display_limit, ] = useState(10)
-  // const [fetch_weather, update_weather] = useState(false)
+  const [display_limit,] = useState(10)
 
   // Get country is defined as async as network queries can stall and such.
   // Following construct is required to make Typescript happy about resolving

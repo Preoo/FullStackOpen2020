@@ -15,21 +15,11 @@ const get_countries = async (fields?: string) => {
         .catch(err => console.error(`get_countries error ${err.message}`))
 }
 
-// const get_country = async (country_name: string, fields?: string) => {
-//     const api_string = fields
-//         ? countries_api + `/name/${country_name}?fields=${fields}`
-//         : countries_api + `/name/${country_name}`
-//     return Axios
-//         .get(api_string, { responseType: 'json' })
-//         .then(res => res.data)
-//         .catch(err => console.error(`get_countries error ${err.message}`))
-// }
-
 const get_weather = async (city: string) => {
     // define API_KEY in .env file located in project root
     // format is REACT_APP_[MY_VARIABLE]=[VARIABLE_VALUE]
     const weather_api_key: string | undefined = process.env.REACT_APP_WEATHER_API
-    console.log(weather_api_key)
+    // CBA to register so I simulate this behavior in here with sample data.
     return Axios
         .get(weather_api + '/res/api_key=' + weather_api_key)
         .then(res => res.data)

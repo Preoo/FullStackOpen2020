@@ -61,7 +61,7 @@ const App = () => {
     event.preventDefault()
     const filters = [filter_existing, filter_has_number]
     const messages = [`${newName} is already recorded`, `number-field cannot by empty`]
-    const contact: Contact = { name: newName, number: newNumber }
+    const contact: Contact = { name: newName, number: newNumber } // add id property to this
     const errors = filters.map(f => f(persons, contact))
 
     if (errors.every(err => err)) {

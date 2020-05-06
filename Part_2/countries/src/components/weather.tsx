@@ -5,26 +5,38 @@ import { WeatherPanel } from './weather_panel';
 
 type WeatherOrNull = Weather | null
 type Weather = {
-    
+    location: {
+        name: string,
+        country: string,
+    },
+    current: {
+        temperature: number,
+        weather_icons: string[],
+        weather_descriptions: string[]
+        wind_speed: number,
+        wind_degree: number,
+        wind_dir: number,
+        humidity: number,
+        feelslike: number,
+    }
 }
-const Weather = (country:Country) => {
+const Weather = ({ name, capital }: Country) => {
     const [weather, set_weather] = useState(null as WeatherOrNull)
     useEffect(() => {
         (async () => {
-            await get_weather(country.capital).then(weather => set_weather(weather))
-          })()
-    }, [country.capital])
+            await get_weather(capital).then(weather => set_weather(weather))
+        })()
+    }, [capital])
 
     return (
         <div>
-            <h4>Weather</h4>
-            <p>{`Weather panel for capital city ${country.capital} in country ${country.name} will be added here.`}</p>
             {
-                console.log()
+                weather
+                    ? <WeatherPanel {...weather as Weather} />
+                    : <p>{`Weather panel for capital city ${capital} in country ${name} will be added here.`}</p>
             }
-            {/* <WeatherPanel {...weather?.list[0]?.weather[0]}/> */}
         </div>
     )
 }
 
-export {Weather}
+export { Weather }
