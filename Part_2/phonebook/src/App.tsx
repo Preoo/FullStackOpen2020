@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Axios from 'axios'
-import {get, add} from './services/persons'
+import {get, add, remove} from './services/persons'
 
 // Filters
 const filter_existing = (phonebook: Contact[], contact: Contact): boolean =>
@@ -9,17 +8,22 @@ const filter_has_number = (phonebook: Contact[], contact: Contact): boolean =>
   contact.number.length ? true : false
 
 // Components
+type Clickable = {remove_person:any}
 export type Contact = { name: string, number: string, id:number }
-const ContactDetail = ({ name, number, id }: Contact) => (<p>[{id}]{name} : {number}</p>)
+const ContactDetail = (props: Contact | Clickable) => (
+  <p>[{(props as Contact).id}]{(props as Contact).name} : {(props as Contact).number} <button onClick={(event:any) => (props as Clickable).remove_person((props as Contact).id)}>remove</button> </p>
+)
 
 type ContactProps = { phonebook: Contact[], filter: string }
-const Contacts = ({ phonebook, filter }: ContactProps) => {
+const Contacts = (props: ContactProps | Clickable) => {
+  const {phonebook, filter} = props as ContactProps
+  const {remove_person} = props as Clickable
   return (
     <div>
       {phonebook
         .filter(contact => contact.name.toLowerCase().includes(filter.toLowerCase()))
         .map(contact =>
-          <ContactDetail key={contact.id} name={contact.name} number={contact.number} id={contact.id} />
+          <ContactDetail key={contact.id} name={contact.name} number={contact.number} id={contact.id} remove_person={remove_person} />
         )}
     </div>
   )
@@ -84,9 +88,11 @@ const App = () => {
     // map over contacts and if id === edited.id than swap numbers
   }
   
-  const remove_person = (event: any) => {
-    event.preventDefault()
-    // array.filter with func id !== to_be_removed
+  const remove_person = (id:number) => {
+    const remove_person = persons.find(person => person.id === id)
+    if (window.confirm(`Remove contact ${remove_person?.name}`)) {
+      remove(id).then(resp => setPersons(persons.filter(person => person.id !== id)))
+    }
   }
 
   return (
@@ -102,7 +108,7 @@ const App = () => {
       <div>
         <span>Filter:</span>
         <Input input_value={newFilter} on_change={(event: any) => setNewFilter(event.target.value)} />
-        <Contacts phonebook={persons} filter={newFilter} />
+        <Contacts phonebook={persons} filter={newFilter} remove_person={remove_person}/>
       </div>
     </div>
   )

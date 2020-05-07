@@ -15,8 +15,8 @@ const add = (contact:Contact):Promise<AxiosResponse<any>> => {
 //     return
 // }
 
-// const remove = (contact:Contact):Promise<AxiosResponse<any>> => {
-//     return
-// }
+const remove = (id:number):Promise<AxiosResponse<any>> => {
+    return Axios.delete(`${base_url}/${id}`)
+}
 
-export {get, add, /*modify, remove*/}
+export {get, add, /*modify,*/ remove}
