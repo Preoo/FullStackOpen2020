@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {get, add, remove} from './services/persons'
+import { get, add, modify, remove } from './services/persons'
 
 // Filters
 const filter_existing = (phonebook: Contact[], contact: Contact): boolean =>
@@ -8,16 +8,16 @@ const filter_has_number = (phonebook: Contact[], contact: Contact): boolean =>
   contact.number.length ? true : false
 
 // Components
-type Clickable = {remove_person:any}
-export type Contact = { name: string, number: string, id:number }
+type Clickable = { remove_person: any }
+export type Contact = { name: string, number: string, id: number }
 const ContactDetail = (props: Contact | Clickable) => (
-  <p>[{(props as Contact).id}]{(props as Contact).name} : {(props as Contact).number} <button onClick={(event:any) => (props as Clickable).remove_person((props as Contact).id)}>remove</button> </p>
+  <p>[{(props as Contact).id}]{(props as Contact).name} : {(props as Contact).number} <button onClick={(event: any) => (props as Clickable).remove_person((props as Contact).id)}>remove</button> </p>
 )
 
 type ContactProps = { phonebook: Contact[], filter: string }
 const Contacts = (props: ContactProps | Clickable) => {
-  const {phonebook, filter} = props as ContactProps
-  const {remove_person} = props as Clickable
+  const { phonebook, filter } = props as ContactProps
+  const { remove_person } = props as Clickable
   return (
     <div>
       {phonebook
@@ -62,33 +62,29 @@ const App = () => {
   // Event handlers
   const add_person = (event: any) => {
     event.preventDefault()
-    const filters = [filter_existing, filter_has_number]
-    const messages = [`${newName} is already recorded`, `number-field cannot by empty`]
-    // const max_id:number = Math.max(...persons.map(p => p.id)) // need max of id to keep them consistant if we allow deletion
-    const contact:Partial<Contact> = { 
+    const contact: Partial<Contact> = {
       name: newName,
       number: newNumber,
-      // id: max_id + 1
     }
-    const errors = filters.map(f => f(persons, contact as Contact))
-
-    if (errors.every(err => err)) {
+    const is_new_contact = filter_existing(persons, contact as Contact)
+    if (is_new_contact) {
       // save new contact to db with POST
       add(contact as Contact)
         .then(resp => setPersons([...persons, resp.data as Contact]))
     } else {
-      errors.forEach((ok, i) => { if (!ok) alert(messages[i]) })
+      // modify existing contact
+      if (window.confirm(`Set new number for ${remove_person?.name}`)) {
+        const old:number = (persons.find(p => p.name === (contact as Contact).name) as Contact).id
+        modify(old, contact as Contact)
+          .then(resp => resp.data as Contact)
+          .then(modified => setPersons(persons.map(person => person.id === modified.id ? modified : person)))
+      }
     }
     setNewName('')
     setNewNumber('')
   }
 
-  const edit_person = (event: any) => {
-    event.preventDefault()
-    // map over contacts and if id === edited.id than swap numbers
-  }
-  
-  const remove_person = (id:number) => {
+  const remove_person = (id: number) => {
     const remove_person = persons.find(person => person.id === id)
     if (window.confirm(`Remove contact ${remove_person?.name}`)) {
       remove(id).then(resp => setPersons(persons.filter(person => person.id !== id)))
@@ -108,7 +104,7 @@ const App = () => {
       <div>
         <span>Filter:</span>
         <Input input_value={newFilter} on_change={(event: any) => setNewFilter(event.target.value)} />
-        <Contacts phonebook={persons} filter={newFilter} remove_person={remove_person}/>
+        <Contacts phonebook={persons} filter={newFilter} remove_person={remove_person} />
       </div>
     </div>
   )
