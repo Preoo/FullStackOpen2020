@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import Axios from 'axios'
+import {get, add} from './services/persons'
 
 // Filters
 const filter_existing = (phonebook: Contact[], contact: Contact): boolean =>
@@ -8,8 +9,8 @@ const filter_has_number = (phonebook: Contact[], contact: Contact): boolean =>
   contact.number.length ? true : false
 
 // Components
-type Contact = { name: string, number: string }
-const ContactDetail = ({ name, number }: Contact) => (<p>{name} : {number}</p>)
+export type Contact = { name: string, number: string, id:number }
+const ContactDetail = ({ name, number, id }: Contact) => (<p>[{id}]{name} : {number}</p>)
 
 type ContactProps = { phonebook: Contact[], filter: string }
 const Contacts = ({ phonebook, filter }: ContactProps) => {
@@ -18,7 +19,7 @@ const Contacts = ({ phonebook, filter }: ContactProps) => {
       {phonebook
         .filter(contact => contact.name.toLowerCase().includes(filter.toLowerCase()))
         .map(contact =>
-          <ContactDetail key={contact.name} name={contact.name} number={contact.number} />
+          <ContactDetail key={contact.id} name={contact.name} number={contact.number} id={contact.id} />
         )}
     </div>
   )
@@ -51,9 +52,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(res => setPersons(res.data))
+    get().then(resp => setPersons(resp.data))
   }, [])
 
   // Event handlers
@@ -61,16 +60,33 @@ const App = () => {
     event.preventDefault()
     const filters = [filter_existing, filter_has_number]
     const messages = [`${newName} is already recorded`, `number-field cannot by empty`]
-    const contact: Contact = { name: newName, number: newNumber } // add id property to this
-    const errors = filters.map(f => f(persons, contact))
+    // const max_id:number = Math.max(...persons.map(p => p.id)) // need max of id to keep them consistant if we allow deletion
+    const contact:Partial<Contact> = { 
+      name: newName,
+      number: newNumber,
+      // id: max_id + 1
+    }
+    const errors = filters.map(f => f(persons, contact as Contact))
 
     if (errors.every(err => err)) {
-      setPersons([...persons, contact])
+      // save new contact to db with POST
+      add(contact as Contact)
+        .then(resp => setPersons([...persons, resp.data as Contact]))
     } else {
       errors.forEach((ok, i) => { if (!ok) alert(messages[i]) })
     }
     setNewName('')
     setNewNumber('')
+  }
+
+  const edit_person = (event: any) => {
+    event.preventDefault()
+    // map over contacts and if id === edited.id than swap numbers
+  }
+  
+  const remove_person = (event: any) => {
+    event.preventDefault()
+    // array.filter with func id !== to_be_removed
   }
 
   return (
