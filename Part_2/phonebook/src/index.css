@@ -1,3 +1,76 @@
+/* Nord colors: https://www.nordtheme.com/ */
+:root {
+  --nord0: #2e3440;
+  --nord1: #3b4252;
+  --nord2: #434c5e;
+  --nord3: #4c566a;
+  --nord4: #d8dee9;
+  --nord5: #e5e9f0;
+  --nord6: #eceff4;
+  --nord7: #8fbcbb;
+  --nord8: #88c0d0;
+  --nord9: #81a1c1;
+  --nord10: #5e81ac;
+  --nord11: #bf616a;
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
+}
+
+.success {
+  margin-top: 2em;
+  width: auto;
+  color: var(--nord14);
+  background-color: var(--nord3);
+}
+
+.error {
+  margin-top: 2em;
+  width: auto;
+  color: var(--nord11);
+  background-color: var(--nord3);
+}
+
+.phonebook {
+  /* background-color: var(--nord2); */
+  border: hidden;
+  border-top: solid var(--nord1);
+}
+
+.contact {
+  width: 22em;
+  background-color: var(--nord0);
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+.main {
+  width: 50%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: right;
+  align-items: right;
+  align-content: left;
+}
+
+.form-input > input {
+  width: 100%;
+}
+
+.form-input > button {
+  width: 100%;
+  margin-top: 1em;
+  height: 2em;
+}
+
+span {
+  color: var(--nord4);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +78,33 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--nord6);
+  background-color: var(--nord0);
+  width: 100%;
+  height: 100%;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+h2 {
+  color: var(--nord9);
+}
+
+input {
+  width: 15em;
+  padding: .33em .5em;
+  margin: 1em .5em;
+  box-sizing: border-box;
+  background-color: var(--nord3);
+  color: var(--nord5);
+  border: none;
+}
+
+input[type=button] input[type=submit], button {
+  background-color: var(--nord2);
+  color: var(--nord8);
+  border: none;
 }
