@@ -21,7 +21,18 @@ const get_random_id = (max) => Math.floor(Math.random() * Math.floor(max))
 
 // middlewares
 app.use(express.json())
-app.use(morgan('tiny'))
+// app.use(morgan('tiny'))
+app.use(morgan( (tokens, req, res) => {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    req.method === 'POST' ? `body:${JSON.stringify(req.body)}` : '',
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'),
+    '-',
+    tokens['response-time'](req, res), 'ms'
+  ].filter(Boolean).join(' ')
+} ))
 
 // Routes
 
