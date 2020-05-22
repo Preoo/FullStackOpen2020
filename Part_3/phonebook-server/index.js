@@ -28,6 +28,12 @@ app.get('/api/persons', (req, res) => {
 	res.json(persons)
 })
 
+app.get('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  const person = persons.find(person => person.id === +id)
+  person ? res.send(person) : res.status(404).send(`Id ${id} is not known.`)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
 	console.log(`Server up on port ${PORT}.`)
