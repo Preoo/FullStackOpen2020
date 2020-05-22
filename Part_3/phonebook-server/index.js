@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-
+const base_api = '/api/persons/'
 let persons = [
     {
       "name": "feelsgoodman",
@@ -24,14 +24,20 @@ app.get('/info', (req, res) => {
   ${now.toString()}`)
 })
 
-app.get('/api/persons', (req, res) => {
+app.get(`${base_api}`, (req, res) => {
 	res.json(persons)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get(`${base_api}:id`, (req, res) => {
   const id = req.params.id
   const person = persons.find(person => person.id === +id)
-  person ? res.send(person) : res.status(404).send(`Id ${id} is not known.`)
+  person ? res.send(person) : res.status(404).end()
+})
+
+app.delete(`${base_api}:id`, (req, res) => {
+  const id = req.params.id
+  persons = persons.filter(person => person.id !== +id)
+  res.status(204).end()
 })
 
 const PORT = 3001
