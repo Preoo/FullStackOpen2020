@@ -18,6 +18,12 @@ app.get('/', (req, res) => {
 	res.send('hello')
 })
 
+app.get('/info', (req, res) => {
+  const now = new Date()
+  res.send(`Phonebook has info on ${persons.length} people.<br>
+  ${now.toString()}`)
+})
+
 app.get('/api/persons', (req, res) => {
 	res.json(persons)
 })
