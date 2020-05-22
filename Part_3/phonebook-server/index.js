@@ -1,6 +1,9 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 const base_api = '/api/persons/'
+
+// Utilities and Functions
 let persons = [
     {
       name: "feelsgoodman",
@@ -18,6 +21,9 @@ const get_random_id = (max) => Math.floor(Math.random() * Math.floor(max))
 
 // middlewares
 app.use(express.json())
+app.use(morgan('tiny'))
+
+// Routes
 
 app.get('/', (req, res) => {
 	res.send('hello')
@@ -54,7 +60,6 @@ app.post(`${base_api}`, (req, res) => {
     number: number,
     id: get_random_id(Number.MAX_SAFE_INTEGER)
   }
-  console.log(new_person)
   persons = persons.concat(new_person)
   res.json(new_person)
 })
