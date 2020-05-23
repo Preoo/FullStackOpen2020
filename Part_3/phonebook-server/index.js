@@ -13,8 +13,8 @@ let persons = [
     },
     {
       name: "asd",
-      number: 123,
-      id: 2
+      number: "123",
+      id: "2"
     }
 ]
 

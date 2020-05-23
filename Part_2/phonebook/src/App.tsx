@@ -13,7 +13,7 @@ const Notification = ({ message, message_type }: Notification) => (
 )
 
 type Clickable = { remove_person: any }
-export type Contact = { name: string, number: string, id: number }
+export type Contact = { name: string, number: string, id: string | number }
 const ContactDetail = (props: Contact | Clickable) => (
   <p className='contact'><button onClick={(event: any) => (props as Clickable).remove_person((props as Contact).id)}>Remove</button> {(props as Contact).name} : {(props as Contact).number}</p>
 )
@@ -98,7 +98,7 @@ const App = () => {
     } else {
       // modify existing contact
       if (window.confirm(`Set new number for ${contact?.name}?`)) {
-        const old: number = (persons.find(p => p.name === (contact as Contact).name) as Contact).id
+        const old: string | number = (persons.find(p => p.name === (contact as Contact).name) as Contact).id
         modify(old, contact as Contact)
           .then(resp => resp.data as Contact)
           .then(modified => setPersons(persons.map(person => person.id === modified.id ? modified : person)))
@@ -113,7 +113,7 @@ const App = () => {
     setNewNumber('')
   }
 
-  const remove_person = (id: number) => {
+  const remove_person = (id: string | number) => {
     const remove_person = persons.find(person => person.id === id)
     if (window.confirm(`Remove contact ${remove_person?.name}?`)) {
       remove(id).then(_ => setPersons(persons.filter(person => person.id !== id)))

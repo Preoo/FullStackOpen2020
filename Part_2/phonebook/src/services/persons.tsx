@@ -12,11 +12,11 @@ const add = (contact:Contact):Promise<AxiosResponse<any>> => {
     return Axios.post(base_url, contact)
 }
 
-const modify = (id:number, contact:Contact):Promise<AxiosResponse<any>> => {
+const modify = (id:string | number, contact:Contact):Promise<AxiosResponse<any>> => {
     return Axios.put(`${base_url}/${id}`, contact)
 }
 
-const remove = (id:number):Promise<AxiosResponse<any>> => {
+const remove = (id:string | number):Promise<AxiosResponse<any>> => {
     return Axios.delete(`${base_url}/${id}`)
 }
 
