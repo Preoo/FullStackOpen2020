@@ -21,15 +21,23 @@ const personSchema = new mongoose.Schema({
     // id: Number,
 })
 
+personSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+      delete returnedObject.__v
+    }
+  })
+
 const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length === 2) {
     // just listing current persons db
     console.info('Phonebook: ')
-    Person.find({}).then(persons => {
-        persons.forEach(person => console.info(`${person.name} ${person.number}`))
-        mongoose.connection.close()
-      })
+    Person.find({}) //console.info(`${person.name} ${person.number}`)
+        .then(persons => persons.forEach(person => console.log(person.toJSON())))
+        .catch(err => console.log('Docker up db-server dummy'))
+        .finally(() => mongoose.connection.close())
 } else if (process.argv.length === 4) {
     const name = process.argv[2]
     const number = process.argv[3]

@@ -1,9 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const app = express()
 const base_api = '/api/persons/'
-
+const Person = require('./models/person')
 // Utilities and Functions
 let persons = [
     {
@@ -49,7 +50,13 @@ app.get('/info', (req, res) => {
 })
 
 app.get(`${base_api}`, (req, res) => {
-	res.json(persons)
+  // res.json(persons)
+  Person.find({})
+    .then(persons => res.json(persons))
+    .catch(err => {
+      console.error(err)
+      res.status(404).end()
+    })
 })
 
 app.get(`${base_api}:id`, (req, res) => {
@@ -63,18 +70,18 @@ app.post(`${base_api}`, (req, res) => {
 
   if (!name || !number) return res.status(400).json(
     { error:'content missing. A valid name and number is required.'})
-  
-  if (persons.find(person => person.name === name)) return res.status(400).json({
-    error: 'for some reason names must be unique 🤔'
-  })
-  
-  const new_person = {
+
+  const new_person = new Person({
     name: name,
     number: number,
-    id: get_random_id(Number.MAX_SAFE_INTEGER)
-  }
-  persons = persons.concat(new_person)
-  res.json(new_person)
+  })
+
+  new_person.save()
+    .then(saved_person => res.json(saved_person))
+    .catch(err => {
+      console.error(err)
+      res.status(400).json({error: 'malformed id'})
+    })
 })
 
 app.delete(`${base_api}:id`, (req, res) => {
