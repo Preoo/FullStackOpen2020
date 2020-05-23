@@ -1,7 +1,8 @@
 import { Contact } from "../App"
 import Axios, { AxiosResponse } from "axios"
 
-const base_url:string = 'http://localhost:3001/persons'
+// const base_url:string = 'http://localhost:3001/api/persons'
+const base_url:string = '/api/persons'
 
 const get = ():Promise<AxiosResponse<any>> => {
     return Axios.get(base_url)

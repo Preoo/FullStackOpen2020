@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const morgan = require('morgan')
 const app = express()
 const base_api = '/api/persons/'
@@ -20,8 +21,9 @@ let persons = [
 const get_random_id = (max) => Math.floor(Math.random() * Math.floor(max))
 
 // middlewares
+app.use(express.static('build'))
 app.use(express.json())
-// app.use(morgan('tiny'))
+app.use(cors())
 app.use(morgan( (tokens, req, res) => {
   return [
     tokens.method(req, res),
@@ -81,7 +83,7 @@ app.delete(`${base_api}:id`, (req, res) => {
   res.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
 	console.log(`Server up on port ${PORT}.`)
 })
