@@ -18,10 +18,17 @@ const personSchema = new mongoose.Schema({
 
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString()
-      delete returnedObject._id
-      delete returnedObject.__v
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
     }
-  })
+})
+
+// const close_connection = () => mongoose.connection.close(() => process.exit(0))
+// If the Node process ends, close the Mongoose connection
+// https://gist.github.com/pasupulaphani/9463004
+// Seems to be pointless, using mongo shell, active and current connections are
+// closed when terminating task with this block commented.
+// process.on('SIGINT', close_connection).on('SIGTERM', close_connection);
 
 module.exports = mongoose.model('Person', personSchema)

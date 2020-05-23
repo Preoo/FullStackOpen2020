@@ -57,6 +57,7 @@ app.get(`${base_api}`, (req, res) => {
       console.error(err)
       res.status(404).end()
     })
+    // .finally(() => mongoose.connection.close())
 })
 
 app.get(`${base_api}:id`, (req, res) => {
@@ -82,6 +83,7 @@ app.post(`${base_api}`, (req, res) => {
       console.error(err)
       res.status(400).json({error: 'malformed id'})
     })
+    // .finally(() => mongoose.connection.close())
 })
 
 app.delete(`${base_api}:id`, (req, res) => {

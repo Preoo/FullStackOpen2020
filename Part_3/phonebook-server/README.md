@@ -14,4 +14,8 @@ Afterwards run command to restart mongo server:
 
     docker start fullstack_mongo
 
-the end.
+Common commands include:
+
+* docker start fullstack_mongo
+* docker stop fullstack_mongo
+* docker exec -it fullstack_mongo /bin/bash
