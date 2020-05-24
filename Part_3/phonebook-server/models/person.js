@@ -22,7 +22,7 @@ const personSchema = new mongoose.Schema({
     name: {
         type: String,
         minlength: 3,
-        required: true
+        required: true,
     },
     number: {
         type: String,
@@ -38,6 +38,13 @@ personSchema.set('toJSON', {
         delete returnedObject.__v
     }
 })
+
+// Instead of pulling a plugin, I just added this validion handle to scheme
+// Taken without shame from https://stackoverflow.com/a/54721095
+personSchema.path('name').validate(async (value) => {
+    const emailCount = await mongoose.models.Person.countDocuments({name: value })
+    return !emailCount
+}, 'Name must be unique (for some reason 🤔)')
 
 // const close_connection = () => mongoose.connection.close(() => process.exit(0))
 // If the Node process ends, close the Mongoose connection
