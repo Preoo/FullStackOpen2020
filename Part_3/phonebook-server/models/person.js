@@ -15,7 +15,7 @@ const mongoose_opts = {
 }
 
 mongoose.connect(CONNECT_URI, mongoose_opts)
-    .then(res => console.info(`Connected to ${process.env.MONGO_DB}`))
+    .then(() => console.info(`Connected to ${process.env.MONGO_DB}`))
     .catch(err => console.error(`mongoose error: ${err.message}`))
 
 const personSchema = new mongoose.Schema({
@@ -42,7 +42,7 @@ personSchema.set('toJSON', {
 // Instead of pulling a plugin, I just added this validion handle to scheme
 // Taken without shame from https://stackoverflow.com/a/54721095
 personSchema.path('name').validate(async (value) => {
-    const emailCount = await mongoose.models.Person.countDocuments({name: value })
+    const emailCount = await mongoose.models.Person.countDocuments({ name: value })
     return !emailCount
 }, 'Name must be unique (for some reason 🤔)')
 
