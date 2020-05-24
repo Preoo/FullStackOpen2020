@@ -92,8 +92,9 @@ const App = () => {
         .then(() => {
           show_notification({ message: `Added ${contact.name} to phonebook`, message_type: 'success' })
         })
-        .catch(_ => {
-          show_notification({ message: `Failed to add new contact`, message_type: 'error' })
+        .catch(err => {
+          // console.error(err.response)
+          show_notification({ message: `Failed to add new contact because ${err.response.data.error}`, message_type: 'error' })
         })
     } else {
       // modify existing contact
@@ -103,9 +104,14 @@ const App = () => {
           .then(resp => resp.data as Contact)
           .then(modified => setPersons(persons.map(person => person.id === modified.id ? modified : person)))
           .then(() => show_notification({ message: `Success`, message_type: 'success' }))
-          .catch(_ => {
-            show_notification({ message: `Failed to modify contact`, message_type: 'error' })
+          .catch(err => {
+            show_notification({ message: `Failed to modify contact because ${err.response.data.error}`, message_type: 'error' })
             setPersons(persons.filter(p => p.id !== old))
+            /*if status code is 404 - Not Found
+                -> filter erronous person from list
+              else
+                -> leave old in there
+            */
           })
       }
     }
@@ -117,7 +123,7 @@ const App = () => {
     const remove_person = persons.find(person => person.id === id)
     if (window.confirm(`Remove contact ${remove_person?.name}?`)) {
       remove(id).then(_ => setPersons(persons.filter(person => person.id !== id)))
-        .catch(_ => show_notification({ message: `Failed to remove contact`, message_type: 'error' }))
+        .catch(err => show_notification({ message: `Failed to remove contact because ${err.response.data.error}`, message_type: 'error' }))
     }
   }
 

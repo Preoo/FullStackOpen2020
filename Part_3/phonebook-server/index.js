@@ -43,27 +43,27 @@ app.get('/', (req, res) => {
   res.send('hello')
 })
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
   Person.countDocuments({}).then(count => {
     const now = new Date()
     res.send(`Phonebook has info on ${count} people.<br>
       ${now.toString()}`)
-  })
+  }).catch(error => next(error))
 })
 
-app.get(`${base_api}`, (req, res) => {
+app.get(`${base_api}`, (req, res, next) => {
   // res.json(persons)
   Person.find({})
     .then(persons => res.json(persons))
     .catch(error => next(error))
-    // .catch(err => {
-    //   console.error(err)
-    //   res.status(404).end()
-    // })
+  // .catch(err => {
+  //   console.error(err)
+  //   res.status(404).end()
+  // })
   // .finally(() => mongoose.connection.close())
 })
 
-app.get(`${base_api}:id`, (req, res) => {
+app.get(`${base_api}:id`, (req, res, next) => {
   const id = req.params.id
   // const person = persons.find(person => person.id === +id)
   // person ? res.send(person) : res.status(404).end()
@@ -75,7 +75,7 @@ app.get(`${base_api}:id`, (req, res) => {
     .catch(error => next(error))
 })
 
-app.post(`${base_api}`, (req, res) => {
+app.post(`${base_api}`, (req, res, next) => {
   const { name, number } = req.body || {}
 
   if (!name || !number) return res.status(400).json(
@@ -89,14 +89,14 @@ app.post(`${base_api}`, (req, res) => {
   new_person.save()
     .then(saved_person => res.json(saved_person))
     .catch(error => next(error))
-    // .catch(err => {
-    //   console.error(err)
-    //   res.status(400).json({ error: 'malformed id' })
-    // })
+  // .catch(err => {
+  //   console.error(err)
+  //   res.status(400).json({ error: 'malformed id' })
+  // })
   // .finally(() => mongoose.connection.close())
 })
 
-app.delete(`${base_api}:id`, (req, res) => {
+app.delete(`${base_api}:id`, (req, res, next) => {
   const id = req.params.id
   // persons = persons.filter(person => person.id !== +id)
   // res.status(204).end()
@@ -105,30 +105,32 @@ app.delete(`${base_api}:id`, (req, res) => {
     .catch(error => next(error))
 })
 
-app.put(`${base_api}:id`, (req, res) => {
+app.put(`${base_api}:id`, (req, res, next) => {
   const id = req.params.id
   const { name, number } = req.body || {}
 
   if (!name || !number) return res.status(400).json(
     { error: 'content missing. A valid name and number is required.' })
 
-  Person.findByIdAndUpdate(id, { name: name, number: number }, { new: true })
+  Person.findByIdAndUpdate(id, { name: name, number: number }, { new: true, runValidators: true })
     .then(updated_person => res.json(updated_person))
     .catch(error => next(error))
-    // .catch(err => {
-    //   console.error(err)
-    //   res.status(500).json({ error: 'Server error on contact update' })
-    // })
+  // .catch(err => {
+  //   console.error(err)
+  //   res.status(500).json({ error: 'Server error on contact update' })
+  // })
 })
 
 const blackhole_endpoint = (req, res) => res.status(404).json(
-  {error: 'Event horizon ahead, turn back captain!'})
+  { error: 'Event horizon ahead, turn back captain!' })
 app.use(blackhole_endpoint)
 
 const error_handler = (error, req, res, next) => {
-  console.error(error)
-  if (error.name === 'CastError') return response.status(400).json(
+  console.error(error.message)
+  if (error.name === 'CastError') return res.status(400).json(
     { error: 'malformatted id' })
+  if (error.name === 'ValidationError') return res.status(400).json(
+    { error: error.message })
   // pass to default error handler
   next(error)
 }

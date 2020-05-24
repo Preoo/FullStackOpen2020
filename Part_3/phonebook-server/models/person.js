@@ -6,14 +6,29 @@ const mongoose = require('mongoose')
 // const CONNECT_URI_AUTH = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${process.env.MONGO_URL}:${process.env.MONGO_PORT}/${MONGO_DB}`
 const CONNECT_URI = `mongodb://${process.env.MONGO_URL}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`
 console.info(`Connecting to mongoDB at ${CONNECT_URI}`)
-mongoose.connect(CONNECT_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+
+const mongoose_opts = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+}
+
+mongoose.connect(CONNECT_URI, mongoose_opts)
     .then(res => console.info(`Connected to ${process.env.MONGO_DB}`))
     .catch(err => console.error(`mongoose error: ${err.message}`))
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-    // id: Number,
+    name: {
+        type: String,
+        minlength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minlength: 8,
+        required: true
+    },
 })
 
 personSchema.set('toJSON', {
