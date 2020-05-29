@@ -5,7 +5,6 @@ describe('list_helper misc', () => {
         const res = list_helper.dummy([])
         expect(res).toBe(1)
     })
-
 })
 
 describe('total likes', () => {
@@ -21,5 +20,32 @@ describe('total likes', () => {
 
     test('when list is empty, return 0', () => {
         expect(list_helper.total_likes([])).toBe(0)
+    })
+})
+
+describe('favourite blog', () => {
+    test('for empty list return an empty object', () => {
+        expect(list_helper.favourite_blog([])).toEqual({})
+    })
+
+    test('return correct blog for most likes in correct format', () => {
+        const correct = {
+            title: 'Canonical string reduction',
+            author: 'Edsger W. Dijkstra',
+            likes: 12
+        }
+        expect(list_helper.favourite_blog(blogs)).toEqual(correct)
+    })
+})
+
+describe('author by most blogs', () => {
+    test('for empty list return an empty object', () => {
+        expect(list_helper.most_blogs([])).toEqual({})
+    })
+})
+
+describe('author most likes', () => {
+    test('for empty list return an empty object', () => {
+        expect(list_helper.most_likes([])).toEqual({})
     })
 })

@@ -7,7 +7,15 @@ const total_likes = blogs => {
     return blogs.reduce((sum, blog) => sum + blog.likes, 0)
 }
 
-const favourite_blog = blogs => blogs
+const favourite_blog = blogs => {
+    if (!blogs.length) return {}
+    const fav = blogs.reduce((fav_blog, blog) => blog.likes > fav_blog.likes ? blog : fav_blog, {likes: -Infinity})
+    return {
+        title: fav.title,
+        author: fav.author,
+        likes: fav.likes
+    }
+}
 
 const most_blogs = blogs => blogs
 
