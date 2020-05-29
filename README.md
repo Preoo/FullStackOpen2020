@@ -23,3 +23,10 @@ Go to corresponding Part\_n folder. Run command
 
 which will create a folder with supplied app-name in working directory and initilize the project. 
 
+## MongoDB
+Diverging from course material, I will use self-hosted Docker container named `fullstack_mongo` to house database.
+Start it from Powershell with command:
+
+	docker start fullstack_mongo
+
+and start using it. Further tips and commands are located in `Part_3/phonebook-server/README.md`, reminder on how to access mongo shell.
