@@ -34,7 +34,7 @@ describe('favourite blog', () => {
             author: 'Edsger W. Dijkstra',
             likes: 12
         }
-        expect(list_helper.favourite_blog(blogs)).toEqual(correct)
+        expect([correct]).toContainEqual(list_helper.favourite_blog(blogs))
     })
 })
 
@@ -42,10 +42,18 @@ describe('author by most blogs', () => {
     test('for empty list return an empty object', () => {
         expect(list_helper.most_blogs([])).toEqual({})
     })
+
+    test('return author by most blogs', () => {
+        expect([{author: 'Robert C. Martin', blogs: 3}]).toContainEqual(list_helper.most_blogs(blogs))
+    })
 })
 
 describe('author most likes', () => {
     test('for empty list return an empty object', () => {
         expect(list_helper.most_likes([])).toEqual({})
+    })
+
+    test('return author by most likes', () => {
+        expect([{author: 'Edsger W. Dijkstra', likes: 17}]).toContainEqual(list_helper.most_likes(blogs))
     })
 })
