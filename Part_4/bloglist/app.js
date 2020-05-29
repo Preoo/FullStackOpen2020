@@ -3,11 +3,11 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const config = require('./config')
-// const logger = require('./utils/logger')
+const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blog_router = require('./controllers/blogs')
-// const Blog = require('./models/blog')
 
+logger.info('Attempting mongoDB connection')
 const mongoUrl = `mongodb://${config.MONGO_URL}:${config.MONGO_PORT}/${config.MONGO_DB}`
 const mongoose_opts = {
     useNewUrlParser: true,
@@ -17,6 +17,7 @@ const mongoose_opts = {
 }
 
 mongoose.connect(mongoUrl, mongoose_opts)
+logger.info(`Successfully connected to mongoDB collection ${config.MONGO_DB} on ${config.MONGO_URL}`)
 
 app.use(cors())
 app.use(express.json())
