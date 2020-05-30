@@ -13,7 +13,7 @@ beforeAll(async () => {
 })
 
 describe('GET api/blogs', () => {
-    
+
     test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
@@ -34,6 +34,29 @@ describe('GET api/blogs', () => {
 
 })
 
+describe('POST api/blogs', () => {
+
+    test('adding new blog is successful', async () => {
+        const added_blog = {
+            title: 'TEST BLOG',
+            author: 'tester',
+            url: 'https://example.com/',
+            likes: 0
+        }
+        await api
+            .post('/api/blogs')
+            .send(added_blog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        const updated_blogs = await api.get('/api/blogs')
+        expect(updated_blogs.body).toHaveLength(test_blogs.length + 1)
+        expect(updated_blogs.body).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining(added_blog)
+            ])
+        )
+    })
+})
 
 afterAll(() => {
     mongoose.connection.close()
