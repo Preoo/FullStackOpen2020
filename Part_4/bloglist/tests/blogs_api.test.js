@@ -6,6 +6,20 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
+// test utility functions
+const generate_missing_id = async () => {
+    const blog = new Blog({ title: 'willremovethissoon' })
+    await blog.save()
+    await blog.remove()
+
+    return blog._id.toString()
+}
+
+const blogs_in_database = async () => {
+    const blogs = await Blog.find({})
+    return blogs.map(blog => blog.toJSON())
+}
+
 beforeAll(async () => {
     await Blog.deleteMany({})
     const fresh_blogs = test_blogs.map(blog => new Blog(blog))
@@ -76,7 +90,57 @@ describe('POST api/blogs', () => {
             author: 'Invalid',
             likes: 0
         }
+        const startstate = await blogs_in_database()
         await api.post('/api/blogs').send(invalid_blog).expect(400)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length)
+    })
+})
+
+describe('DELETE /api/blogs/:id', () => {
+    test('endpoint responses with 400 on invalid id', async () => {
+        const startstate = await blogs_in_database()
+        await api.delete('/api/blogs/11111111').expect(400)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length)
+    })
+    test('endpoint responses with 204 if no such blog exists', async () => {
+        const missing_id = await generate_missing_id()
+        const startstate = await blogs_in_database()
+        await api.delete(`/api/blogs/${missing_id}`).expect(204)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length)
+    })
+    test('endpoint deletes a blog correctly', async () => {
+        const startstate = await blogs_in_database()
+        const blog_to_be_deleted = startstate[0]
+        await api.delete(`/api/blogs/${blog_to_be_deleted.id}`).expect(204)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length - 1)
+    })
+})
+
+describe('PUT /api/blogs/:id', () => {
+    test('likes on blog are updated when passed a full object', async () => {
+        const startstate = await blogs_in_database()
+        const updated = {...startstate[0], likes:13}
+        await api.put(`/api/blogs/${updated.id}`).send(updated).expect(200)
+        const endstate = await blogs_in_database()
+        expect(endstate[0].likes).toBe(13)
+    })
+    test('likes on blog are updated when passed a object containing only likes count', async () => {
+        const startstate = await blogs_in_database()
+        const updated = {likes:13}
+        await api.put(`/api/blogs/${startstate[0].id}`).send(updated).expect(200)
+        const endstate = await blogs_in_database()
+        expect(endstate[0].likes).toBe(13)
+        expect(endstate[0].title).toBe(startstate[0].title)
+    })
+    test('operation fails with empty body', async () => {
+        const startstate = await blogs_in_database()
+        await api.put(`/api/blogs/${startstate[0].id}`).send({}).expect(400)
+        const endstate = await blogs_in_database()
+        expect(endstate).toContainEqual(startstate[0])
     })
 })
 

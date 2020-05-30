@@ -14,10 +14,11 @@ const blackhole_endpoint = (req, res) => res.status(404).json(
     { error: 'Event horizon ahead, turn back captain!' })
 
 const error_handler = (error, req, res, next) => {
-    console.error(error.message)
+    logger.error(error.message)
 
-    if (error.name === 'CastError') return res.status(400).json(
-        { error: 'malformatted id' })
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+        return res.status(400).json({ error: 'malformatted id' })
+    }
 
     if (error.name === 'ValidationError') return res.status(400).json(
         { error: error.message })
