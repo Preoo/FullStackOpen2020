@@ -37,24 +37,38 @@ describe('GET api/blogs', () => {
 describe('POST api/blogs', () => {
 
     test('adding new blog is successful', async () => {
-        const added_blog = {
+        const new_blog = {
             title: 'TEST BLOG',
             author: 'tester',
             url: 'https://example.com/',
-            likes: 0
+            likes: 1
         }
         await api
             .post('/api/blogs')
-            .send(added_blog)
+            .send(new_blog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
         const updated_blogs = await api.get('/api/blogs')
         expect(updated_blogs.body).toHaveLength(test_blogs.length + 1)
         expect(updated_blogs.body).toEqual(
             expect.arrayContaining([
-                expect.objectContaining(added_blog)
+                expect.objectContaining(new_blog)
             ])
         )
+    })
+
+    test('if posted blog has missing property .likes, it defaults to 0', async () => {
+        const new_blog = {
+            title: 'TEST BLOG',
+            author: 'tester',
+            url: 'https://example.com/'
+        }
+        const response = await api
+            .post('/api/blogs')
+            .send(new_blog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        expect(response.body.likes).toBe(0)
     })
 })
 
