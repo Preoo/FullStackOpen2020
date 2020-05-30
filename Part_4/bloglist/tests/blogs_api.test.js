@@ -70,6 +70,14 @@ describe('POST api/blogs', () => {
             .expect('Content-Type', /application\/json/)
         expect(response.body.likes).toBe(0)
     })
+
+    test('if posted blog is missing title and url, endpoint responds with status 400 - Bad Request', async () => {
+        const invalid_blog = {
+            author: 'Invalid',
+            likes: 0
+        }
+        await api.post('/api/blogs').send(invalid_blog).expect(400)
+    })
 })
 
 afterAll(() => {

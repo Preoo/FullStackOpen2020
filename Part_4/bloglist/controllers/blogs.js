@@ -7,6 +7,9 @@ blog_router.get('/', async (request, response) => {
 })
 
 blog_router.post('/', async (request, response) => {
+    const {title, url} = request.body
+    if (!(title || url)) return response.status(400).end()
+
     const blog = await (new Blog(request.body)).save()
     response.status(201).json(blog.toJSON())
 })
