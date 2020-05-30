@@ -1,5 +1,6 @@
 const blogs = require('../utils/blogs_for_tests')
 const list_helper = require('../utils/list_helper')
+
 describe('list_helper misc', () => {
     test('dummy returns constant', () => {
         const res = list_helper.dummy([])
