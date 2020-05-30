@@ -7,7 +7,7 @@ blog_router.get('/', async (request, response) => {
 })
 
 blog_router.post('/', async (request, response) => {
-    const {title, url} = request.body
+    const { title, url } = request.body
     if (!(title || url)) return response.status(400).end()
 
     const blog = await (new Blog(request.body)).save()
@@ -33,7 +33,8 @@ blog_router.put('/:id', async (request, response) => {
         likes: request.body.likes
     }
 
-    const updated_blog = await Blog.findByIdAndUpdate(request.params.id, new_blog, {new: true})
+    const updated_blog = await Blog
+        .findByIdAndUpdate(request.params.id, new_blog, { new: true })
     response.json(updated_blog)
 })
 
