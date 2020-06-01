@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const { mock_blogs } = require('./mock_data')
+const { mock_blogs, mock_users } = require('./mock_data')
 const { documents_in_database } = require('./test_utils')
 const Blog = require('../models/blog')
-
+const User = require('../models/user')
 const api = supertest(app)
 
 // test utility functions
@@ -24,6 +24,10 @@ beforeAll(async () => {
     await Blog.deleteMany({})
     const fresh_blogs = mock_blogs.map(blog => new Blog(blog))
     await Promise.all(fresh_blogs.map(blog => blog.save()))
+
+    await User.deleteMany({})
+    const fresh_users = mock_users.map(user => new User(user))
+    await Promise.all(fresh_users.map(user => user.save()))
 })
 
 describe('GET api/blogs', () => {
@@ -69,6 +73,8 @@ describe('POST api/blogs', () => {
                 expect.objectContaining(new_blog)
             ])
         )
+        const latest_blog_index = mock_blogs.length
+        expect(updated_blogs.body[latest_blog_index].user).toBeDefined()
     })
 
     test('if posted blog has missing property .likes, it defaults to 0', async () => {
