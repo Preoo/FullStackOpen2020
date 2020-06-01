@@ -5,12 +5,15 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-const {login_error} = require('../utils/errors')
+const { login_error, login_error_no_hash } = require('../utils/errors')
 
 login_router.post('/', async (request, response) => {
     const creds = request.body
 
     const user = await User.findOne({ username: creds.username })
+
+    if (!user.password_hash) return response.status(401).json(login_error_no_hash)
+
     const login_valid = user === null
         ? false
         : await bcrypt.compare(creds.password, user.password_hash)
