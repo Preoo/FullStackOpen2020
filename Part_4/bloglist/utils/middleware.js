@@ -31,8 +31,17 @@ const error_handler = (error, req, res, next) => {
     next(error)
 }
 
+const get_token_from_request = (request, response, next) => {
+    const auth_header = request.get('authorization')
+    request.token = auth_header && auth_header.toLowerCase().startsWith('bearer ')
+        ? auth_header.substring(7)
+        : null
+    next()
+}
+
 module.exports = {
     log_request,
     blackhole_endpoint,
-    error_handler
+    error_handler,
+    get_token_from_request
 }

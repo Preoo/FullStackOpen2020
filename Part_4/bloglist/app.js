@@ -25,6 +25,7 @@ logger.info(`Successfully connected to mongoDB collection ${config.MONGO_DB} on 
 app.use(cors())
 app.use(express.json())
 app.use(middleware.log_request)
+app.use(middleware.get_token_from_request)
 
 app.use('/api/login', login_router)
 app.use('/api/blogs', blog_router)
