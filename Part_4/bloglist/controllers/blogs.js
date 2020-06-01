@@ -26,6 +26,17 @@ blog_router.post('/', async (request, response) => {
 })
 
 blog_router.delete('/:id', async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    const owner = await User.findById(blog.user)
+
+    const user_token = jwt.verify(request.token, process.env.JWT_SECRET)
+    if (!user_token.id) return response.status(401).json(invalid_token_error)
+
+    if (owner._id.toString() !== user_token.id) {
+        return response.status(403).end()
+    }
+    owner.blogs = owner.blogs.filter(owners_blog => owners_blog._id !== blog._id)
+    await owner.save()
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
