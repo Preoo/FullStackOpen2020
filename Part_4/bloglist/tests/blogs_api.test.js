@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const test_blogs = require('../tests/blogs_for_tests')
+const { mock_blogs } = require('./mock_data')
+const { documents_in_database } = require('./test_utils')
 const Blog = require('../models/blog')
 
 const api = supertest(app)
@@ -14,15 +15,14 @@ const generate_missing_id = async () => {
 
     return blog._id.toString()
 }
-
+// compat shim
 const blogs_in_database = async () => {
-    const blogs = await Blog.find({})
-    return blogs.map(blog => blog.toJSON())
+    return documents_in_database(Blog)
 }
 
 beforeAll(async () => {
     await Blog.deleteMany({})
-    const fresh_blogs = test_blogs.map(blog => new Blog(blog))
+    const fresh_blogs = mock_blogs.map(blog => new Blog(blog))
     await Promise.all(fresh_blogs.map(blog => blog.save()))
 })
 
@@ -37,7 +37,7 @@ describe('GET api/blogs', () => {
 
     test('endpoint returns correct amount of blogs', async () => {
         const received_blogs = await api.get('/api/blogs')
-        expect(received_blogs.body).toHaveLength(test_blogs.length)
+        expect(received_blogs.body).toHaveLength(mock_blogs.length)
     })
 
     test('endpoint defines property .id for blogs', async () => {
@@ -63,7 +63,7 @@ describe('POST api/blogs', () => {
             .expect(201)
             .expect('Content-Type', /application\/json/)
         const updated_blogs = await api.get('/api/blogs')
-        expect(updated_blogs.body).toHaveLength(test_blogs.length + 1)
+        expect(updated_blogs.body).toHaveLength(mock_blogs.length + 1)
         expect(updated_blogs.body).toEqual(
             expect.arrayContaining([
                 expect.objectContaining(new_blog)

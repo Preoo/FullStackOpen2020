@@ -7,6 +7,8 @@ const config = require('./config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blog_router = require('./controllers/blogs')
+const user_router = require('./controllers/users')
+// const login_router = require('./controllers/login')
 
 logger.info('Attempting mongoDB connection')
 const mongoUrl = `mongodb://${config.MONGO_URL}:${config.MONGO_PORT}/${config.MONGO_DB}`
@@ -25,6 +27,7 @@ app.use(express.json())
 app.use(middleware.log_request)
 
 app.use('/api/blogs', blog_router)
+app.use('/api/users', user_router)
 
 app.use(middleware.blackhole_endpoint)
 app.use(middleware.error_handler)
