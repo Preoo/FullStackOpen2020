@@ -8,7 +8,7 @@ const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blog_router = require('./controllers/blogs')
 const user_router = require('./controllers/users')
-// const login_router = require('./controllers/login')
+const login_router = require('./controllers/login')
 
 logger.info('Attempting mongoDB connection')
 const mongoUrl = `mongodb://${config.MONGO_URL}:${config.MONGO_PORT}/${config.MONGO_DB}`
@@ -26,6 +26,7 @@ app.use(cors())
 app.use(express.json())
 app.use(middleware.log_request)
 
+app.use('/api/login', login_router)
 app.use('/api/blogs', blog_router)
 app.use('/api/users', user_router)
 
