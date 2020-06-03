@@ -2,12 +2,16 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 let token = null
 
-const getAll = () => {
+// left as is since it's used in useEffect hook
+// if this is refactored into a async fun,
+// useEffect needs to call a separate async func or
+// use an IIFE.
+const getBlogs = () => {
     const request = axios.get(baseUrl)
     return request.then(response => response.data)
 }
 
-const postNew = async blog => {
+const postBlog = async blog => {
     const config = {
         headers: {
             Authorization: token
@@ -40,4 +44,4 @@ const deleteBlog = async id => {
 }
 
 const setToken = newToken => token = `bearer ${newToken}`
-export default { getAll, postNew, setToken, updateBlog, deleteBlog }
+export default { getBlogs, postBlog, setToken, updateBlog, deleteBlog }

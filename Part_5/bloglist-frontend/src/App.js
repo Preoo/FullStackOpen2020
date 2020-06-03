@@ -16,8 +16,15 @@ const App = () => {
 
     const blogFormRef = React.createRef()
 
+    // call this in useEffect hook if getBlogs is converted
+    // into a async function
+    // const getBlogs = async () => {
+    //     const received_blogs = await blogService.getBlogs()
+    //     setBlogs(received_blogs)
+    // }
+
     useEffect(() => {
-        blogService.getAll().then(blogs =>
+        blogService.getBlogs().then(blogs =>
             setBlogs(blogs)
         )
     }, [])
@@ -64,7 +71,7 @@ const App = () => {
         blogFormRef.current.toggleVisibility()
         console.log(`adding new blog: ${newblog}`)
         try {
-            const blog = await blogService.postNew(newblog)
+            const blog = await blogService.postBlog(newblog)
             if (blog) {
                 setBlogs(blogs.concat(blog))
             }
