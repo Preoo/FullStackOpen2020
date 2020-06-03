@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [addBlog, setAddBlog] = useState({})
     const [notification, setNewNotification] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -52,15 +53,13 @@ const App = () => {
         }
     }
 
-    const handleNewBlog = async event => {
-        event.preventDefault()
-        console.log(`adding new blog: ${addBlog}`)
+    const handleNewBlog = async newblog => {
+        console.log(`adding new blog: ${newblog}`)
         try {
-            const blog = await blogService.postNew(addBlog)
+            const blog = await blogService.postNew(newblog)
             if (blog) {
                 setBlogs(blogs.concat(blog))
             }
-            setAddBlog({})
 
             setNewNotification('added blog')
             setTimeout(() => setNewNotification(null), 2000)
@@ -93,25 +92,6 @@ const App = () => {
         </div>
     )
 
-    const blogForm = () => (
-        <div>
-            <h3>Add new blog</h3>
-            <form onSubmit={handleNewBlog} >
-                <div>
-                    title
-                <input type='text' name='Title'
-                        onChange={({ target }) => setAddBlog({ ...addBlog, title: target.value })} />
-                </div>
-                <div>
-                    author
-                <input type='text' name='Author'
-                        onChange={({ target }) => setAddBlog({ ...addBlog, author: target.value })} />
-                </div>
-                <button type='submit'>add</button>
-            </form>
-        </div>
-    )
-
     if (!user) {
         return (
             loginForm()
@@ -124,10 +104,9 @@ const App = () => {
             {
                 userDisplay()
             }
-            {
-                blogForm()
-            }
-
+            <Toggleable buttonLabel='new blog'>
+                <BlogForm addNewBlog={handleNewBlog}/>
+            </Toggleable>
             <h2>Blogs</h2>
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
