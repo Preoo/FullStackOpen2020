@@ -7,7 +7,7 @@ import loginService from './services/login'
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [addBlog, setAddBlog] = useState({})
-    const [notification, setNewNotification] = useState('testing')
+    const [notification, setNewNotification] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
@@ -112,18 +112,20 @@ const App = () => {
         </div>
     )
 
+    if (!user) {
+        return (
+            loginForm()
+        )
+    }
+
     return (
         <div>
             <Notification message={notification} />
             {
-                user !== null
-                    ? userDisplay()
-                    : null
+                userDisplay()
             }
             {
-                user === null
-                    ? loginForm()
-                    : blogForm()
+                blogForm()
             }
 
             <h2>Blogs</h2>
