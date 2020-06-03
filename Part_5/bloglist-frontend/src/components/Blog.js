@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
     const [compact, SetCompact] = useState(true)
     const blogStyle = {
@@ -12,7 +12,7 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
     const details = () => (
         <div>
             <p>
-            Url: {blog?.url}
+            Url: {blog.url}
             </p>
             <p>
                 Author: {blog.author}
@@ -34,8 +34,8 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
             {blog.title}
             {
                 compact === false
-                ? details()
-                : ' ..'
+                    ? details()
+                    : ' ..'
             }
         </div>
     )

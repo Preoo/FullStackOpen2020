@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -101,22 +102,6 @@ const App = () => {
         }
     }
 
-    const loginForm = () => (
-        <form onSubmit={handleLogin} >
-            <div>
-                username
-                    <input type='text' value={username} name='Username'
-                    onChange={({ target }) => setUsername(target.value)} />
-            </div>
-            <div>
-                password
-                    <input type='text' value={password} name='Password'
-                    onChange={({ target }) => setPassword(target.value)} />
-            </div>
-            <button type='submit'>login</button>
-        </form>
-    )
-
     const userDisplay = () => (
         <div>
             <p>Hello {user.name}</p>
@@ -126,11 +111,15 @@ const App = () => {
 
     if (!user) {
         return (
-            loginForm()
+            <LoginForm
+                handleLogin={handleLogin}
+                handleUsernameChange={({ target }) => setUsername(target.value)}
+                handlePasswordChange={({ target }) => setPassword(target.value)}
+                username={username}
+                password={password}
+            />
         )
     }
-
-
 
     return (
         <div>
@@ -146,7 +135,8 @@ const App = () => {
                 <Blog key={blog.id} blog={blog}
                     onLikeBlog={handleLike}
                     onDeleteBlog={handleDelete}
-                    isOwner={blog?.user?.username === user.username}
+                    isOwner={blog.user && blog.user.username === user.username}
+                    //nullable types in js PLEASE! Should go back to TS ffs..
                 />
             )}
         </div>
