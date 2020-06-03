@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-const Blog = ({ blog, onLikeAction }) => {
+const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
     const [compact, SetCompact] = useState(true)
     const blogStyle = {
         paddingTop: 10,
@@ -18,8 +18,11 @@ const Blog = ({ blog, onLikeAction }) => {
                 Author: {blog.author}
             </p>
             <p>
-                Likes: {blog.likes} <button onClick={() => onLikeAction(blog)}>like</button>
+                Likes: {blog.likes} <button onClick={() => onLikeBlog(blog)}>like</button>
             </p>
+            {
+                isOwner === true && <button onClick={() => onDeleteBlog(blog)}>remove</button>
+            }
         </div>
 
     )

@@ -88,6 +88,19 @@ const App = () => {
         }
     }
 
+    const handleDelete = async delete_blog => {
+        if (window.confirm(`Really delete blog ${delete_blog.title}`)) {
+            try {
+                const status = await blogService.deleteBlog(delete_blog.id)
+                if (status === 204) {
+                    setBlogs(blogs.filter(blog => delete_blog.id !== blog.id))
+                }
+            } catch (e) {
+                notify('invalid token')
+            }
+        }
+    }
+
     const loginForm = () => (
         <form onSubmit={handleLogin} >
             <div>
@@ -130,7 +143,11 @@ const App = () => {
             </Toggleable>
             <h2>Blogs</h2>
             {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-                <Blog key={blog.id} blog={blog} onLikeAction={handleLike} />
+                <Blog key={blog.id} blog={blog}
+                    onLikeBlog={handleLike}
+                    onDeleteBlog={handleDelete}
+                    isOwner={blog?.user?.username === user.username}
+                />
             )}
         </div>
     )
