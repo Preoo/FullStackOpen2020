@@ -13,6 +13,8 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
 
+    const blogFormRef = React.createRef()
+
     useEffect(() => {
         blogService.getAll().then(blogs =>
             setBlogs(blogs)
@@ -54,6 +56,7 @@ const App = () => {
     }
 
     const handleNewBlog = async newblog => {
+        blogFormRef.current.toggleVisibility()
         console.log(`adding new blog: ${newblog}`)
         try {
             const blog = await blogService.postNew(newblog)
@@ -104,7 +107,7 @@ const App = () => {
             {
                 userDisplay()
             }
-            <Toggleable buttonLabel='new blog'>
+            <Toggleable buttonLabel='new blog' ref={blogFormRef}>
                 <BlogForm addNewBlog={handleNewBlog}/>
             </Toggleable>
             <h2>Blogs</h2>
