@@ -32,7 +32,7 @@ const error_handler = (error, req, res, next) => {
 }
 
 const get_token_from_request = (request, response, next) => {
-    const auth_header = request.get('authorization')
+    const auth_header = request.header('Authorization')
     request.token = auth_header && auth_header.toLowerCase().startsWith('bearer ')
         ? auth_header.substring(7)
         : null

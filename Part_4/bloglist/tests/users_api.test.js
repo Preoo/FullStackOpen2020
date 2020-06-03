@@ -8,7 +8,7 @@ const errors = require('../utils/errors')
 
 const api = supertest(app)
 
-beforeAll(async () => {
+beforeEach(async () => {
     await User.deleteMany({})
     const fresh_users = mock_users.map(user => new User(user))
     await Promise.all(fresh_users.map(user => user.save()))

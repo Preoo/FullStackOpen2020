@@ -27,15 +27,18 @@ blog_router.post('/', async (request, response) => {
 
 blog_router.delete('/:id', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
+    if (!blog) return response.status(204).end()
     const owner = await User.findById(blog.user)
 
     const user_token = jwt.verify(request.token, process.env.JWT_SECRET)
     if (!user_token.id) return response.status(401).json(invalid_token_error)
 
-    if (owner._id.toString() !== user_token.id) {
+    if (owner._id.toString() !== user_token.id.toString()) {
         return response.status(403).end()
     }
+
     owner.blogs = owner.blogs.filter(owners_blog => owners_blog._id !== blog._id)
+    
     await owner.save()
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
@@ -46,15 +49,29 @@ blog_router.put('/:id', async (request, response) => {
         return response.status(400).end()
     }
 
-    const old_blog = await Blog.findById(request.params.id)
+    // according to api docs https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate what happens next is pointless as update mongoose transforms update
+    // to do a set operation on key's in passed in object.
+    // e.g:
+    // let query = { name: 'borne' };
+    // Model.findOneAndUpdate(query, { name: 'jason bourne' }, options, callback)
 
+    // is sent as
+    // Model.findOneAndUpdate(query, { $set: { name: 'jason bourne' }}, options, callback)
+    
+    // passing code as of commit dcf7ec054c439ec37f524acc51f88e9deff031d0
+    // const old_blog = await Blog.findById(request.params.id)
+    // const new_blog = {
+    //     title: request.body.title || old_blog.title,
+    //     author: request.body.author || old_blog.author,
+    //     url: request.body.url || old_blog.author,
+    //     user: old_blog.user,
+    //     likes: request.body.likes
+    // }
+
+    // unclear if any other property than .likes needs updating..
     const new_blog = {
-        title: request.body.title || old_blog.title,
-        author: request.body.author || old_blog.author,
-        url: request.body.url || old_blog.author,
-        likes: request.body.likes
+        likes: request.body.likes || 0
     }
-
     const updated_blog = await Blog
         .findByIdAndUpdate(request.params.id, new_blog, { new: true })
     response.json(updated_blog)

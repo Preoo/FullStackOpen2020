@@ -17,10 +17,11 @@ const generate_missing_id = async () => {
 }
 // compat shim
 const blogs_in_database = async () => {
-    return documents_in_database(Blog)
+    const doc = await documents_in_database(Blog)
+    return doc
 }
 
-beforeAll(async () => {
+beforeEach(async () => {
     await Blog.deleteMany({})
     const fresh_blogs = mock_blogs.map(blog => new Blog(blog))
     await Promise.all(fresh_blogs.map(blog => blog.save()))
@@ -53,7 +54,17 @@ describe('GET api/blogs', () => {
 })
 
 describe('POST api/blogs', () => {
-
+    let token
+    beforeEach(async () =>  {
+        const user = {
+            name: 'new_user',
+            username: 'new_user',
+            password: 'new_user',
+        }
+        await api.post('/api/users').send(user)
+        const resp = await api.post('/api/login').send(user)
+        token = resp.body.token
+    })
     test('adding new blog is successful', async () => {
         const new_blog = {
             title: 'TEST BLOG',
@@ -63,6 +74,7 @@ describe('POST api/blogs', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(new_blog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -85,6 +97,7 @@ describe('POST api/blogs', () => {
         }
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(new_blog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -97,14 +110,47 @@ describe('POST api/blogs', () => {
             likes: 0
         }
         const startstate = await blogs_in_database()
-        await api.post('/api/blogs').send(invalid_blog).expect(400)
+        await api.post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
+            .send(invalid_blog).expect(400)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length)
+    })
+
+    test('if request is missing valid token, adding new blog should fail', async () => {
+        const startstate = await blogs_in_database()
+        const new_blog = {
+            title: 'TEST BLOG',
+            author: 'tester',
+            url: 'https://example.com/'
+        }
+        await api
+            .post('/api/blogs')
+            // .set('Authorization', '')
+            .send(new_blog)
+            .expect(401)
+        await api
+            .post('/api/blogs')
+            .set('Authorization', '')
+            .send(new_blog)
+            .expect(401)
         const endstate = await blogs_in_database()
         expect(endstate.length).toBe(startstate.length)
     })
 })
 
 describe('DELETE /api/blogs/:id', () => {
-
+    let token
+    beforeEach(async () =>  {
+        const user = {
+            name: 'new_user',
+            username: 'new_user',
+            password: 'new_user',
+        }
+        await api.post('/api/users').send(user)
+        const resp = await api.post('/api/login').send(user)
+        token = resp.body.token
+    })
     test('endpoint responses with 400 on invalid id', async () => {
         const startstate = await blogs_in_database()
         await api.delete('/api/blogs/11111111').expect(400)
@@ -122,10 +168,32 @@ describe('DELETE /api/blogs/:id', () => {
 
     test('endpoint deletes a blog correctly', async () => {
         const startstate = await blogs_in_database()
-        const blog_to_be_deleted = startstate[0]
-        await api.delete(`/api/blogs/${blog_to_be_deleted.id}`).expect(204)
+
+        const new_blog = {
+            title: 'TEST BLOG',
+            author: 'tester',
+            url: 'https://example.com/',
+            likes: 1
+        }
+        const blog_to_be_deleted = await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
+            .send(new_blog)
+
+        await api.delete(`/api/blogs/${blog_to_be_deleted.body.id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(204)
+
         const endstate = await blogs_in_database()
-        expect(endstate.length).toBe(startstate.length - 1)
+        expect(endstate.length).toBe(startstate.length)
+        expect(endstate.map(b => b.title)).not.toContain(new_blog.title)
+    })
+
+    test('deleting a blog should fail with 401 if token is invalid', async () => {
+        const startstate = await blogs_in_database()
+        await api.delete(`/api/blogs/${startstate[0].id}`).expect(401)
+        const endstate = await blogs_in_database()
+        expect(endstate.length).toBe(startstate.length)
     })
 })
 
