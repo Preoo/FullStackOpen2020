@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-const Blog = ({ blog }) => {
+const Blog = ({ blog, onLikeAction }) => {
     const [compact, SetCompact] = useState(true)
     const blogStyle = {
         paddingTop: 10,
@@ -18,7 +18,7 @@ const Blog = ({ blog }) => {
                 Author: {blog.author}
             </p>
             <p>
-                Likes: {blog.likes} <button>like</button>
+                Likes: {blog.likes} <button onClick={() => onLikeAction(blog)}>like</button>
             </p>
         </div>
 

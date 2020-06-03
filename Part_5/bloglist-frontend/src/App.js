@@ -36,6 +36,12 @@ const App = () => {
         setUser(null)
         window.localStorage.removeItem('loggedBlogUser')
     }
+
+    const notify = message => {
+        setNewNotification(message)
+        setTimeout(() => setNewNotification(null), 5000)
+    }
+
     const handleLogin = async event => {
         event.preventDefault()
         console.log(`logging in with ${username} : ${password}`)
@@ -46,12 +52,10 @@ const App = () => {
             console.log(user)
             setUsername('')
             setPassword('')
-            setNewNotification('Logged in')
+            notify('Logged in')
             blogService.setToken(user.token)
-            setTimeout(() => setNewNotification(null), 2000)
         } catch (e) {
-            setNewNotification('Invalid credetials')
-            setTimeout(() => setNewNotification(null), 5000)
+            notify('Invalid credetials')
         }
     }
 
@@ -63,12 +67,24 @@ const App = () => {
             if (blog) {
                 setBlogs(blogs.concat(blog))
             }
-
-            setNewNotification('added blog')
-            setTimeout(() => setNewNotification(null), 2000)
+            notify('added blog')
         } catch (e) {
-            setNewNotification('invalid token')
-            setTimeout(() => setNewNotification(null), 5000)
+            notify('invalid token')
+        }
+    }
+
+    const handleLike = async blog => {
+        console.log(`adding like to blog: ${blog}`)
+        try {
+            const update_fields = {
+                likes: blog.likes + 1
+            }
+            const updated_blog = await blogService.updateBlog(blog.id, update_fields)
+            if (updated_blog) {
+                setBlogs(blogs.map(blog => updated_blog.id === blog.id ? updated_blog : blog))
+            }
+        } catch (e) {
+            notify('invalid token')
         }
     }
 
@@ -112,7 +128,7 @@ const App = () => {
             </Toggleable>
             <h2>Blogs</h2>
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+                <Blog key={blog.id} blog={blog} onLikeAction={handleLike}/>
             )}
         </div>
     )
