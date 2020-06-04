@@ -9,34 +9,28 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
         marginBottom: 5
     }
 
-    const details = () => (
-        <div>
-            <p>
-            Url: {blog.url}
-            </p>
-            <p>
-                Author: {blog.author}
-            </p>
-            <p>
-                Likes: {blog.likes} <button onClick={() => onLikeBlog(blog)}>like</button>
-            </p>
-            {
-                isOwner === true && <button onClick={() => onDeleteBlog(blog)}>remove</button>
-            }
-        </div>
+    const visible = () => compact ? 'none' : ''
 
-    )
     return (
         <div style={blogStyle}>
             <button onClick={() => SetCompact(!compact)}>
                 {compact ? 'more' : 'less'}
             </button>
             {blog.title}
-            {
-                compact === false
-                    ? details()
-                    : ' ..'
-            }
+            <div style={{ display: visible() }} className='blog_details'>
+                <p>
+                    Url: {blog.url}
+                </p>
+                <p>
+                    Author: {blog.author}
+                </p>
+                <p>
+                    Likes: {blog.likes} <button onClick={() => onLikeBlog(blog)}>like</button>
+                </p>
+                {
+                    isOwner === true && <button onClick={() => onDeleteBlog(blog)}>remove</button>
+                }
+            </div>
         </div>
     )
 }
