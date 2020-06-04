@@ -36,5 +36,16 @@ describe('A blog', () => {
         expect(div).not.toHaveStyle('display: none')
         expect(button).toHaveTextContent('less')
     })
+
+    test('clicking like button will call passed in event handler', () => {
+        const mockOnLikeBlog = jest.fn()
+        component = render(
+            <Blog blog={blog} onLikeBlog={mockOnLikeBlog} />
+        )
+        const likeButton = component.container.querySelector('.likeButton')
+        fireEvent.click(likeButton)
+        fireEvent.click(likeButton)
+        expect(mockOnLikeBlog.mock.calls).toHaveLength(2)
+    })
 })
 

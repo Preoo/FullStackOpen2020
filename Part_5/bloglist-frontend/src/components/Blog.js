@@ -25,10 +25,10 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
                     Author: {blog.author}
                 </p>
                 <p>
-                    Likes: {blog.likes} <button onClick={() => onLikeBlog(blog)}>like</button>
+                    Likes: {blog.likes} <button className='likeButton' onClick={() => onLikeBlog(blog)}>like</button>
                 </p>
                 {
-                    isOwner === true && <button onClick={() => onDeleteBlog(blog)}>remove</button>
+                    isOwner === true && <button className='removeButton' onClick={() => onDeleteBlog(blog)}>remove</button>
                 }
             </div>
         </div>
