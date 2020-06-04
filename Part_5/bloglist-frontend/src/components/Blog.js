@@ -13,7 +13,7 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
 
     return (
         <div style={blogStyle}>
-            <button onClick={() => SetCompact(!compact)}>
+            <button className='toggleDetails' onClick={() => SetCompact(!compact)}>
                 {compact ? 'more' : 'less'}
             </button>
             {blog.title}

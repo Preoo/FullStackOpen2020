@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
 describe('A blog', () => {
@@ -25,6 +25,16 @@ describe('A blog', () => {
     test('will not render details by default', () => {
         const div = component.container.querySelector('.blog_details')
         expect(div).toHaveStyle('display: none')
+        const button = component.container.querySelector('.toggleDetails')
+        expect(button).toHaveTextContent('more')
+    })
+
+    test('will show details after clicking show more button', () => {
+        const button = component.container.querySelector('.toggleDetails')
+        fireEvent.click(button)
+        const div = component.container.querySelector('.blog_details')
+        expect(div).not.toHaveStyle('display: none')
+        expect(button).toHaveTextContent('less')
     })
 })
 
