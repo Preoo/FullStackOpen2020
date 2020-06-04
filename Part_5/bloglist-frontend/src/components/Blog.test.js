@@ -45,7 +45,7 @@ describe('A blog', () => {
         const likeButton = component.container.querySelector('.likeButton')
         fireEvent.click(likeButton)
         fireEvent.click(likeButton)
-        expect(mockOnLikeBlog.mock.calls).toHaveLength(2)
+        expect(mockOnLikeBlog).toHaveBeenCalledTimes(2)
     })
 })
 
