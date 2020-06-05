@@ -31,6 +31,12 @@ app.use('/api/login', login_router)
 app.use('/api/blogs', blog_router)
 app.use('/api/users', user_router)
 
+// used (only) during testing to reset database during e2e tests
+if (process.env.NODE_ENV === 'test') {
+    const reset_router = require('./controllers/reset')
+    app.use('/api/reset', reset_router)
+}
+
 app.use(middleware.blackhole_endpoint)
 app.use(middleware.error_handler)
 
