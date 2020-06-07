@@ -1,7 +1,11 @@
 describe('Blog list', () => {
     beforeEach(() => {
         cy.request('POST', 'http://localhost:3003/api/reset')
-        cy.request('POST', 'http://localhost:3003/api/users', { user: 'test', username: 'test', password: 'test' })
+        cy.request(
+            'POST',
+            'http://localhost:3003/api/users',
+            { user: 'test', username: 'test', password: 'test' }
+        )
         cy.visit('http://localhost:3000')
     })
     it('can open front page', () => {
@@ -70,6 +74,33 @@ describe('Blog list', () => {
             cy.contains('more').click()
             cy.contains('remove').click()
             cy.contains(blog.title).should('not.exist')
+        })
+        it('should order blogs by likes', () => {
+            // due to way backend handes creatin of new blogs
+            // likes property can be passed in here
+            const blog1 = {
+                title: 'order_test_blog_1',
+                author: 'order_test_author_1',
+                url: 'order_test_url_1',
+                likes: 1
+            }
+            const blog2 = {
+                title: 'order_test_blog_2',
+                author: 'order_test_author_2',
+                url: 'order_test_url_2',
+                likes: 2
+            }
+            cy.createBlog(blog1)
+            cy.createBlog(blog2)
+            // yes, these are brittle, I know.
+            //Just disposable code (this tiem for real) so no matter.
+            cy.get('.blog_main').as('blogs')
+            cy.get('@blogs').first().contains('more').click()
+            cy.get('@blogs').first().should('contain', 'Likes: 2')
+            cy.get('@blogs').first().should('contain', 'order_test_blog_2')
+
+            cy.get('@blogs').last().contains('more').click()
+            cy.get('@blogs').last().should('contain', 'Likes: 1')
         })
     })
 })

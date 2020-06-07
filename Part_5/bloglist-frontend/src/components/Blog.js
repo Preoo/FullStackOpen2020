@@ -12,7 +12,7 @@ const Blog = ({ blog, onLikeBlog, onDeleteBlog, isOwner }) => {
     const visible = () => compact ? 'none' : ''
 
     return (
-        <div style={blogStyle}>
+        <div className='blog_main' style={blogStyle}>
             <button className='toggleDetails' onClick={() => SetCompact(!compact)}>
                 {compact ? 'more' : 'less'}
             </button>
