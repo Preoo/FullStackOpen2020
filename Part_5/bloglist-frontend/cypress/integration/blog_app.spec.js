@@ -60,5 +60,16 @@ describe('Blog list', () => {
             cy.get('.likeButton').click()
             cy.contains('Likes: 1')
         })
+        it('user can delete added blog', () => {
+            const blog = {
+                title: 'delete_test_blog',
+                author: 'delete_test_author',
+                url: 'delete_test_url'
+            }
+            cy.createBlog(blog)
+            cy.contains('more').click()
+            cy.contains('remove').click()
+            cy.contains(blog.title).should('not.exist')
+        })
     })
 })
