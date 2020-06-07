@@ -75,7 +75,7 @@ describe('Blog list', () => {
             cy.contains('remove').click()
             cy.contains(blog.title).should('not.exist')
         })
-        it('should order blogs by likes', () => {
+        it('blogs are (desc.) sorted w.r.t to likes', () => {
             // due to way backend handes creatin of new blogs
             // likes property can be passed in here
             const blog1 = {
