@@ -10,7 +10,7 @@ login_router.post('/', async (request, response) => {
 
     const user = await User.findOne({ username: creds.username })
 
-    if (!user || !user.password_hash) return response.status(401).json(login_error_no_hash)
+    if (user && !user.password_hash) return response.status(401).json(login_error_no_hash)
 
     const login_valid = user === null
         ? false
@@ -23,7 +23,7 @@ login_router.post('/', async (request, response) => {
             username: user.username,
             id: user._id
         }, process.env.JWT_SECRET)
-    response.status(200).send({token, username: user.username, name: user.name})
+    response.status(200).send({token, username: user.username, name: user.name, id: user._id})
 
 })
 

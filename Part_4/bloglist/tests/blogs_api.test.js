@@ -225,5 +225,7 @@ describe('PUT /api/blogs/:id', () => {
 })
 
 afterAll(() => {
+    Blog.deleteMany({})
+    User.deleteMany({})
     mongoose.connection.close()
 })

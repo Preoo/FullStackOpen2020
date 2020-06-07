@@ -63,7 +63,7 @@ const App = () => {
             notify('Logged in')
             blogService.setToken(user.token)
         } catch (e) {
-            notify('Invalid credetials')
+            notify('Invalid credentials')
         }
     }
 
@@ -73,9 +73,10 @@ const App = () => {
         try {
             const blog = await blogService.postBlog(newblog)
             if (blog) {
+                console.log(blog)
                 setBlogs(blogs.concat(blog))
+                notify('added blog')
             }
-            notify('added blog')
         } catch (e) {
             notify('invalid token')
         }
@@ -118,13 +119,16 @@ const App = () => {
 
     if (!user) {
         return (
-            <LoginForm
-                handleLogin={handleLogin}
-                handleUsernameChange={({ target }) => setUsername(target.value)}
-                handlePasswordChange={({ target }) => setPassword(target.value)}
-                username={username}
-                password={password}
-            />
+            <div>
+                <Notification message={notification} />
+                <LoginForm
+                    handleLogin={handleLogin}
+                    handleUsernameChange={({ target }) => setUsername(target.value)}
+                    handlePasswordChange={({ target }) => setPassword(target.value)}
+                    username={username}
+                    password={password}
+                />
+            </div>
         )
     }
 
@@ -142,8 +146,9 @@ const App = () => {
                 <Blog key={blog.id} blog={blog}
                     onLikeBlog={handleLike}
                     onDeleteBlog={handleDelete}
-                    isOwner={blog.user && blog.user.username === user.username}
-                    //nullable types in js PLEASE! Should go back to TS ffs..
+                    isOwner={blog.user && (blog.user === user.id || blog.user.id === user.id)}
+                    // above is due to unfortunate bug where in new blogs user is a id:string and blogs from api/blogs contain populated user object
+                    // it shall stay as is since this is last part where it is needed
                 />
             )}
         </div>
