@@ -33,12 +33,19 @@ const reducer = (state = initialState, action) => {
                 anecdote.id === voted_anecdote.id
                 ? voted_anecdote
                 : anecdote
-            )
+            ).sort((a, b) => b.votes - a.votes)
         case 'ADD':
             return [...state, asObject(action.data)]
         default:
             return state
     }
+}
+
+export const vote_anecdote = id => {
+    return { type: 'VOTE', data: { id } }
+}
+export const add_anecdote = anecdote => {
+    return { type: 'ADD', data: anecdote}
 }
 
 export default reducer
