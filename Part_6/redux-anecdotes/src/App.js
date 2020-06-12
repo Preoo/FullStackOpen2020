@@ -3,6 +3,7 @@ import './App.css'
 import AnecdoteForm from './components/AnecdoteForm'
 import Anecdotes from './components/Anecdotes'
 import Notification from './components/Notification'
+import Filter from './components/Filter'
 
 const App = () => (
     <article>
@@ -11,6 +12,7 @@ const App = () => (
                 Anecdotes
             </h2>
         </header>
+        <Filter />
         <Anecdotes />
         <AnecdoteForm />
         <Notification />
