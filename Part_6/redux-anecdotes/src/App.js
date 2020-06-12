@@ -2,6 +2,7 @@ import React from 'react'
 import './App.css'
 import AnecdoteForm from './components/AnecdoteForm'
 import Anecdotes from './components/Anecdotes'
+import Notification from './components/Notification'
 
 const App = () => (
     <article>
@@ -12,6 +13,7 @@ const App = () => (
         </header>
         <Anecdotes />
         <AnecdoteForm />
+        <Notification />
         <footer>
             footer text
         </footer>
