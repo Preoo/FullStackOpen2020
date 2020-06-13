@@ -18,7 +18,6 @@ const Filter = () => {
                     onChange={(event) => modify_filter(event.target.value)}
                 />
             </p>
-            
         </section>
     )
 }

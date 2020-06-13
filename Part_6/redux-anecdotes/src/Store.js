@@ -8,6 +8,8 @@ const reducer = combineReducers({
     notification: notification_reducer,
     filter: filter_reducer
 })
+// Do it this way instead using dev tools
+// const store = createStore(rootReducer, applyMiddleware(thunk));
 const store = createStore(reducer)
 
 export default store
