@@ -2,13 +2,13 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { add_anecdote } from '../reducers/anecdoteReducer'
 
-const AnecdoteForm = (props) => {
+const AnecdoteForm = () => {
     const dispatch = useDispatch()
     const add = async event => {
         event.preventDefault()
         const anecdote = event.target.anecdote.value
         event.target.anecdote.value = ''
-        dispatch(add_anecdote({content: anecdote, votes: 0}))
+        dispatch(add_anecdote({ content: anecdote, votes: 0 }))
     }
 
     return (
