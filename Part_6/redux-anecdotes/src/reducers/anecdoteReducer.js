@@ -1,3 +1,4 @@
+import anecdote_service from '../services/anecdotes'
 
 const anecdote_reducer = (state = [], action) => {
     console.log('state now: ', state)
@@ -29,7 +30,14 @@ export const vote_anecdote = id => {
 export const add_anecdote = anecdote => {
     return { type: 'ADD', data: anecdote}
 }
-export const init_anecdotes = anecdotes => {
-    return { type: 'INIT', data: anecdotes}
+// export const init_anecdotes = anecdotes => {
+//     return { type: 'INIT', data: anecdotes}
+// }
+// thunks version
+export const init_anecdotes = () => {
+    return async dispatch => {
+        const anecdotes = await anecdote_service.getAnecdotes()
+        dispatch({ type: 'INIT', data: anecdotes})
+    }
 }
 export default anecdote_reducer
