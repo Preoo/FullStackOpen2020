@@ -9,7 +9,7 @@ const Anecdotes = () => {
     })
     const dispatch = useDispatch()
     const vote = anecdote => {
-        dispatch(vote_anecdote(anecdote.id))
+        dispatch(vote_anecdote(anecdote))
         dispatch(show_notification(`You voted for ${anecdote.content}`))
     }
 
