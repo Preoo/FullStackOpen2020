@@ -1,28 +1,27 @@
 import React, { useState } from 'react'
 import {
-    BrowserRouter as Router,
-    Switch, Route, Link
+    Switch, Route, Link, Redirect, useRouteMatch
 } from 'react-router-dom'
-
-const Menu = () => {
-    const padding = {
-        paddingRight: 5
-    }
-    return (
-        <div>
-            <a href='#' style={padding}>anecdotes</a>
-            <a href='#' style={padding}>create new</a>
-            <a href='#' style={padding}>about</a>
-        </div>
-    )
-}
 
 const AnecdoteList = ({ anecdotes }) => (
     <div>
         <h2>Anecdotes</h2>
         <ul>
-            {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+            {anecdotes.map(anecdote => 
+                <li key={anecdote.id}>
+                    <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+                </li>
+            )}
         </ul>
+    </div>
+)
+
+const Anecdote = ({ anecdote }) => (
+    <div>
+        <h3>{anecdote.content}</h3>
+        <p>{anecdote.author}</p>
+        <p>{anecdote.info}</p>
+        <p>{anecdote.votes}</p>
     </div>
 )
 
@@ -44,7 +43,7 @@ const Footer = () => (
     <div>
         Anecdote app for <a href='https://courses.helsinki.fi/fi/tkt21009'>Full Stack -websovelluskehitys</a>.
 
-    See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js</a> for the source code.
+        See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js</a> for the source code.
     </div>
 )
 
@@ -115,6 +114,11 @@ const App = () => {
     const anecdoteById = (id) =>
         anecdotes.find(a => a.id === id)
 
+    const routeMatch = useRouteMatch('/anecdotes/:id')
+    const matchedAnecdote = routeMatch
+        ? anecdoteById(routeMatch.params.id)
+        : null
+
     const vote = (id) => {
         const anecdote = anecdoteById(id)
 
@@ -131,7 +135,7 @@ const App = () => {
     }
 
     return (
-        <Router>
+        <div>
             <nav>
                 <Link style={padding} to='/'>anecdotes</Link>
                 <Link style={padding} to='/create'>create new</Link>
@@ -145,13 +149,19 @@ const App = () => {
                 <Route path='/about'>
                     <About />
                 </Route>
-                <Route path='/'>
+                <Route path='/anecdotes/:id'>
+                    <Anecdote anecdote={matchedAnecdote}/>
+                </Route>
+                <Route path='/anecdotes'>
                     <AnecdoteList anecdotes={anecdotes} />
+                </Route>
+                <Route path='/'>
+                    <Redirect to='/anecdotes'/>
                 </Route>
             </Switch>
 
             <Footer/>
-        </Router>
+        </div>
     )
 }
 
