@@ -11,6 +11,8 @@ This repository contains my efforts to work through FullStackOpen MOOC course ma
 3. part\_n
 	* part\_n\_app
 
+As such it more of a journey. Therefore first parts may contain WTFs.
+
 ## Notes, Problems and Workarounds!
 _Problem_: After initializing react-app with `npx create-react-app app`, running `npm start` seems to do nothing useful.
 _Workaround_: run build scripts direct with command `node /node_modules/react-scripts/scripts/start.js` in project root directory. Or create a .npmrc config file in project root with following content `ignore-scripts=false`
