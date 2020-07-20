@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
 import {
-    Switch, Route, Link, Redirect, useRouteMatch
+    Switch, Route, Link, Redirect,
+    useRouteMatch, useHistory
 } from 'react-router-dom'
 
 const AnecdoteList = ({ anecdotes }) => (
     <div>
         <h2>Anecdotes</h2>
         <ul>
-            {anecdotes.map(anecdote => 
+            {anecdotes.map(anecdote =>
                 <li key={anecdote.id}>
-                    <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+                    <Link to={`/anecdotes/${anecdote.id}`}>
+                        {anecdote.content}
+                    </Link>
                 </li>
             )}
         </ul>
@@ -52,7 +55,6 @@ const CreateNew = (props) => {
     const [author, setAuthor] = useState('')
     const [info, setInfo] = useState('')
 
-
     const handleSubmit = (e) => {
         e.preventDefault()
         props.addNew({
@@ -69,21 +71,32 @@ const CreateNew = (props) => {
             <form onSubmit={handleSubmit}>
                 <div>
                     content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+                    <input
+                        name='content'
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
                 </div>
                 <div>
                     author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+                    <input
+                        name='author'
+                        value={author}
+                        onChange={(e) => setAuthor(e.target.value)}
+                    />
                 </div>
                 <div>
                     url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+                    <input
+                        name='info'
+                        value={info}
+                        onChange={(e) => setInfo(e.target.value)}
+                    />
                 </div>
                 <button>create</button>
             </form>
         </div>
     )
-
 }
 
 const App = () => {
@@ -103,12 +116,15 @@ const App = () => {
             id: '2'
         }
     ])
-
+    const history = useHistory()
     const [notification, setNotification] = useState('')
 
     const addNew = (anecdote) => {
         anecdote.id = (Math.random() * 10000).toFixed(0)
         setAnecdotes(anecdotes.concat(anecdote))
+        history.push('/anecdotes')
+        setNotification(`Anecdote ${anecdote.content} added to anecdotes list`)
+        setTimeout(() => setNotification(''), 10000)
     }
 
     const anecdoteById = (id) =>
@@ -142,6 +158,10 @@ const App = () => {
                 <Link style={padding} to='/about'>about</Link>
             </nav>
 
+            {notification.length > 0 &&
+                <p>{notification}</p>
+            }
+
             <Switch>
                 <Route path='/create'>
                     <CreateNew addNew={addNew} />
@@ -150,19 +170,22 @@ const App = () => {
                     <About />
                 </Route>
                 <Route path='/anecdotes/:id'>
-                    <Anecdote anecdote={matchedAnecdote}/>
+                    {matchedAnecdote
+                        ? <Anecdote anecdote={matchedAnecdote} />
+                        : <Redirect to='/anecdotes' />
+                    }
                 </Route>
                 <Route path='/anecdotes'>
                     <AnecdoteList anecdotes={anecdotes} />
                 </Route>
                 <Route path='/'>
-                    <Redirect to='/anecdotes'/>
+                    <Redirect to='/anecdotes' />
                 </Route>
             </Switch>
 
-            <Footer/>
+            <Footer />
         </div>
     )
 }
 
-export default App;
+export default App
