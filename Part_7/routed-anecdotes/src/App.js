@@ -54,17 +54,13 @@ const useField = type => {
     const [value, setValue] = useState('')
     const onChange = event => setValue(event.target.value)
     const reset = () => setValue('')
-    return {type, value, onChange, reset}
+    return [{ type, value, onChange }, reset]
 }
 
 const CreateNew = (props) => {
-    // const [content, setContent] = useState('')
-    // const [author, setAuthor] = useState('')
-    // const [info, setInfo] = useState('')
-
-    const content = useField('text')
-    const author = useField('text')
-    const info = useField('text')
+    const [content, contentReset] = useField('text')
+    const [author, authorReset] = useField('text')
+    const [info, infoReset] = useField('text')
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -78,9 +74,9 @@ const CreateNew = (props) => {
 
     const handleClear = e => {
         e.preventDefault()
-        content.reset()
-        author.reset()
-        info.reset()
+        contentReset()
+        authorReset()
+        infoReset()
     }
 
     return (
