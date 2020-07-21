@@ -53,7 +53,8 @@ const Footer = () => (
 const useField = type => {
     const [value, setValue] = useState('')
     const onChange = event => setValue(event.target.value)
-    return {type, value, onChange}
+    const reset = () => setValue('')
+    return {type, value, onChange, reset}
 }
 
 const CreateNew = (props) => {
@@ -75,6 +76,13 @@ const CreateNew = (props) => {
         })
     }
 
+    const handleClear = e => {
+        e.preventDefault()
+        content.reset()
+        author.reset()
+        info.reset()
+    }
+
     return (
         <div>
             <h2>create a new anecdote</h2>
@@ -91,7 +99,8 @@ const CreateNew = (props) => {
                     url for more info
                     <input {...info}/>
                 </div>
-                <button>create</button>
+                <button type='submit'>create</button>
+                <button onClick={handleClear}>clear</button>
             </form>
         </div>
     )
