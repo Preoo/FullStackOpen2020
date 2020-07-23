@@ -21,10 +21,10 @@ module.exports = {
     ],
     "rules": {
         // I have my own style here
-        "indent": [
-            "error",
-            4
-        ],
+        // "indent": [
+        //     "error",
+        //     4
+        // ],
         // "linebreak-style": [
         //     "error",
         //     "unix"

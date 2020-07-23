@@ -4,64 +4,51 @@ import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { useDispatch, useSelector } from 'react-redux'
+import { show_notification_async } from './reducers/notificationReducer'
+import { get_blogs, add_blog, like_blog, delete_blog } from './reducers/blogReducer'
+import { user_log_out, user_log_in } from './reducers/userReducer'
+import { Switch, Route } from 'react-router-dom'
 
 const App = () => {
-    const [blogs, setBlogs] = useState([])
-    const [notification, setNewNotification] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
 
     const blogFormRef = React.createRef()
 
-    // call this in useEffect hook if getBlogs is converted
-    // into a async function
-    // const getBlogs = async () => {
-    //     const received_blogs = await blogService.getBlogs()
-    //     setBlogs(received_blogs)
-    // }
+    // Redux refactorings
+    const dispatch = useDispatch()
+    const blogs = useSelector(store => store.blogs)
+    const user = useSelector(store => store.user)
 
     useEffect(() => {
-        blogService.getBlogs().then(blogs =>
-            setBlogs(blogs)
-        )
-    }, [])
+        const fun = () => dispatch(get_blogs())
+        fun()
+    }, [dispatch])
 
     // try get user from localstorage
     useEffect(() => {
-        const persistingUser = window.localStorage.getItem('loggedBlogUser')
-        if (persistingUser) {
-            const user = JSON.parse(persistingUser)
-            setUser(user)
-            blogService.setToken(user.token)
-        }
-    }, [])
+        dispatch(user_log_in({ username: 'not_used', password: 'not_used' }))
+    }, [dispatch])
 
     const logOut = () => {
-        blogService.setToken(null)
-        setUser(null)
-        window.localStorage.removeItem('loggedBlogUser')
+        dispatch(user_log_out())
+        setUsername('')
+        setPassword('')
     }
 
     const notify = message => {
-        setNewNotification(message)
-        setTimeout(() => setNewNotification(null), 5000)
+        dispatch(show_notification_async(message, 5))
     }
 
     const handleLogin = async event => {
         event.preventDefault()
         console.log(`logging in with ${username} : ${password}`)
         try {
-            const user = await loginService.login({ username: username, password: password })
-            setUser(user)
-            window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-            console.log(user)
+            dispatch(user_log_in({ username: username, password: password }))
+            notify(`Welcome ${username}`)
             setUsername('')
             setPassword('')
-            notify('Logged in')
-            blogService.setToken(user.token)
         } catch (e) {
             notify('Invalid credentials')
         }
@@ -71,12 +58,8 @@ const App = () => {
         blogFormRef.current.toggleVisibility()
         console.log(`adding new blog: ${newblog}`)
         try {
-            const blog = await blogService.postBlog(newblog)
-            if (blog) {
-                console.log(blog)
-                setBlogs(blogs.concat(blog))
-                notify('added blog')
-            }
+            dispatch(add_blog(newblog))
+            notify('added blog')
         } catch (e) {
             notify('invalid token')
         }
@@ -85,42 +68,33 @@ const App = () => {
     const handleLike = async blog => {
         console.log(`adding like to blog: ${blog}`)
         try {
-            const update_fields = {
-                likes: blog.likes + 1
-            }
-            const updated_blog = await blogService.updateBlog(blog.id, update_fields)
-            if (updated_blog) {
-                setBlogs(blogs.map(blog => updated_blog.id === blog.id ? updated_blog : blog))
-            }
+            dispatch(like_blog(blog))
         } catch (e) {
             notify('invalid token')
         }
     }
 
-    const handleDelete = async delete_blog => {
-        if (window.confirm(`Really delete blog ${delete_blog.title}`)) {
+    const handleDelete = async blog => {
+        if (window.confirm(`Really delete blog ${blog.title}`)) {
             try {
-                const status = await blogService.deleteBlog(delete_blog.id)
-                if (status === 204) {
-                    setBlogs(blogs.filter(blog => delete_blog.id !== blog.id))
-                }
+                dispatch(delete_blog(blog))
             } catch (e) {
                 notify('invalid token')
             }
         }
     }
 
-    const userDisplay = () => (
+    const UserDisplay = () => (
         <div>
             <p>Hello {user.name}</p>
             <button onClick={logOut}>log out</button>
         </div>
     )
 
-    if (!user) {
+    if (!user.name) {
         return (
             <div>
-                <Notification message={notification} />
+                <Notification />
                 <LoginForm
                     handleLogin={handleLogin}
                     handleUsernameChange={({ target }) => setUsername(target.value)}
@@ -134,23 +108,27 @@ const App = () => {
 
     return (
         <div>
-            <Notification message={notification} />
-            {
-                userDisplay()
-            }
-            <Toggleable buttonLabel='new blog' ref={blogFormRef}>
-                <BlogForm addNewBlog={handleNewBlog}/>
-            </Toggleable>
-            <h2>Blogs</h2>
-            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-                <Blog key={blog.id} blog={blog}
-                    onLikeBlog={handleLike}
-                    onDeleteBlog={handleDelete}
-                    isOwner={blog.user && (blog.user === user.id || blog.user.id === user.id)}
-                    // above is due to unfortunate bug where in new blogs user is a id:string and blogs from api/blogs contain populated user object
-                    // it shall stay as is since this is last part where it is needed
-                />
-            )}
+            <Switch>
+                <Route path='/'>
+                    <Notification />
+                    <UserDisplay />
+
+                    <Toggleable buttonLabel='new blog' ref={blogFormRef}>
+                        <BlogForm addNewBlog={handleNewBlog}/>
+                    </Toggleable>
+                    <h2>Blogs</h2>
+
+                    {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+                        <Blog key={blog.id} blog={blog}
+                            onLikeBlog={handleLike}
+                            onDeleteBlog={handleDelete}
+                            isOwner={blog.user && (blog.user === user.id || blog.user.id === user.id)}
+                            // above is due to unfortunate bug where in new blogs user is a id:string and blogs from api/blogs contain populated user object
+                            // it shall stay as is since this is last part where it is needed
+                        />
+                    )}
+                </Route>
+            </Switch>
         </div>
     )
 }

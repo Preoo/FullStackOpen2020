@@ -6,9 +6,14 @@ let token = null
 // if this is refactored into a async fun,
 // useEffect needs to call a separate async func or
 // use an IIFE.
-const getBlogs = () => {
-    const request = axios.get(baseUrl)
-    return request.then(response => response.data)
+// const getBlogs = () => {
+//     const request = axios.get(baseUrl)
+//     return request.then(response => response.data)
+// }
+
+const getBlogs = async () => {
+    const response = await axios.get(baseUrl)
+    return response.data
 }
 
 const postBlog = async blog => {

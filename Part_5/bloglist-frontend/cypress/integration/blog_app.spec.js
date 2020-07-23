@@ -61,7 +61,7 @@ describe('Blog list', () => {
             cy.createBlog(blog)
             cy.contains('more').click()
             cy.contains('Likes: 0')
-            cy.get('.likeButton').click()
+            cy.get('.like_Button').click()
             cy.contains('Likes: 1')
         })
         it('user can delete added blog', () => {

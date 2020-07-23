@@ -42,7 +42,7 @@ describe('A blog', () => {
         component = render(
             <Blog blog={blog} onLikeBlog={mockOnLikeBlog} />
         )
-        const likeButton = component.container.querySelector('.likeButton')
+        const likeButton = component.container.querySelector('.like_Button')
         fireEvent.click(likeButton)
         fireEvent.click(likeButton)
         expect(mockOnLikeBlog).toHaveBeenCalledTimes(2)
