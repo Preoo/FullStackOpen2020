@@ -4,7 +4,7 @@ const blogs_reducer = (state=[], action) => {
     switch (action.type) {
         case 'GET_ALL':
             return action.data
-        case 'LIKE':
+        case 'UPDATE':
             return state.map(blog =>
                 blog.id === action.data.id
                     ? action.data
@@ -20,8 +20,6 @@ const blogs_reducer = (state=[], action) => {
 export const get_blogs = () => {
     return async dispatch => {
         const blogs = await blogService.getBlogs()
-        console.log('get_blogs action creator')
-        console.log(blogs)
         dispatch({ type: 'GET_ALL', data: blogs })
     }
 }
@@ -40,11 +38,19 @@ export const delete_blog = (blog) => {
     }
 }
 
+// Incrementing likes count would make more sense to do server side..
 export const like_blog = (blog) => {
     return async dispatch => {
         const update_fields = { likes: blog.likes + 1 }
         const updated_blog = await blogService.updateBlog(blog.id, update_fields)
-        dispatch({ type: 'LIKE', data: updated_blog })
+        dispatch({ type: 'UPDATE', data: updated_blog })
+    }
+}
+
+export const add_comment_blog = (blog, comment) => {
+    return async dispatch => {
+        const commented_blog = await blogService.commentAnonBlog(blog.id, comment)
+        dispatch({ type: 'UPDATE', data: commented_blog })
     }
 }
 

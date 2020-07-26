@@ -1,7 +1,7 @@
-const init_message = { message: '', visiblity: false }
+const no_message = { message: '', visiblity: false }
 let cancelToken = null
 
-const notification_reducer = (state = init_message, action) => {
+const notification_reducer = (state = no_message, action) => {
     switch (action.type) {
         case 'SHOW':
             return action.data
@@ -26,10 +26,7 @@ export const show_notification_async = (notification, duration) => {
         cancelToken = setTimeout(() => {
             dispatch({
                 type: 'HIDE',
-                data: {
-                    message: '',
-                    visiblity: false
-                }
+                data: no_message
             })
         }, duration * 1000)
     }

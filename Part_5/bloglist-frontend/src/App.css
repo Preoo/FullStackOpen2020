@@ -1,38 +1,73 @@
-.App {
-  text-align: center;
+/* Nord colors: https://www.nordtheme.com/ */
+:root {
+  --nord0: #2e3440;
+  --nord1: #3b4252;
+  --nord2: #434c5e;
+  --nord3: #4c566a;
+  --nord4: #d8dee9;
+  --nord5: #e5e9f0;
+  --nord6: #eceff4;
+  --nord7: #8fbcbb;
+  --nord8: #88c0d0;
+  --nord9: #81a1c1;
+  --nord10: #5e81ac;
+  --nord11: #bf616a;
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+main {
+  background-color: var(--nord1);
+  color: var(--nord4);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+nav {
+  background-color: var(--nord3);
+  color: var(--nord10);
+  padding: 1em;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+a {
+  color: var(--nord8);
+}
+a:visited {
+  color: var(--nord9);
 }
 
-.App-link {
-  color: #61dafb;
+li:nth-child(odd) {
+  background-color: var(--nord2);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+li > a {
+  padding: 1em;
+}
+
+ul {
+  list-style: none;
+}
+
+ul > li::before {
+  content: "📝";
+}
+
+.blog_link_title {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--nord9);
+}
+
+.blog_summary {
+  padding: 0 0 0 2em;
+  color: var(--nord14);
+}
+
+aside {
+  padding: 1em;
+  margin: 1em;
+}
+
+body {
+  background-color: var(--nord0);
 }

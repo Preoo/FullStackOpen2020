@@ -1,5 +1,6 @@
 import React, { useState, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
+import { ButtonOK, ButtonCancel } from './CommonStyled'
 
 const Toggleable = React.forwardRef((props, ref) => {
     const [visible, setVisibility] = useState(false)
@@ -16,11 +17,11 @@ const Toggleable = React.forwardRef((props, ref) => {
     return (
         <div>
             <div style={folded}>
-                <button onClick={toggleVisibility} >{props.buttonLabel}</button>
+                <ButtonOK onClick={toggleVisibility} >{props.buttonLabel}</ButtonOK>
             </div>
             <div style={unfolded}>
+                <ButtonCancel onClick={toggleVisibility}>cancel</ButtonCancel>
                 {props.children}
-                <button onClick={toggleVisibility}>cancel</button>
             </div>
         </div>
     )

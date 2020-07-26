@@ -77,4 +77,24 @@ blog_router.put('/:id', async (request, response) => {
     response.json(updated_blog)
 })
 
+blog_router.post('/:id/comments', async (request, response) => {
+    if (Object.keys(request.body).length === 0) {
+        return response.status(400).end()
+    }
+    const comment = request.body.comment
+    const blog = await Blog.findById(request.params.id)
+    if (blog && comment) {
+        const updated_comments = [...blog.comments, comment]
+        const updated_blog = await Blog
+            .findByIdAndUpdate(
+                request.params.id,
+                { comments: updated_comments },
+                { new: true }
+            )
+        response.json(updated_blog)
+    } else {
+        response.status(404).end()
+    }
+})
+
 module.exports = blog_router

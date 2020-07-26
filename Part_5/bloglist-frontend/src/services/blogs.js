@@ -48,5 +48,12 @@ const deleteBlog = async id => {
     return response.status
 }
 
+const commentAnonBlog = async (id, comment) => {
+    const response = await axios.post(`${baseUrl}/${id}/comments`, { comment })
+    return response.data
+}
+
 const setToken = newToken => token = `bearer ${newToken}`
-export default { getBlogs, postBlog, setToken, updateBlog, deleteBlog }
+export default {
+    getBlogs, postBlog, setToken, updateBlog, deleteBlog, commentAnonBlog
+}
