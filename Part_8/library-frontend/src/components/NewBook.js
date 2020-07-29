@@ -4,7 +4,7 @@ import { ADD_BOOK, AUTHOR_INFO, BOOKS_INFO } from '../Queries'
 
 const NewBook = (props) => {
     const [title, setTitle] = useState('')
-    const [author, setAuhtor] = useState('')
+    const [author, setAuthor] = useState('')
     const [published, setPublished] = useState('')
     const [genre, setGenre] = useState('')
     const [genres, setGenres] = useState([])
@@ -42,7 +42,7 @@ const NewBook = (props) => {
 
         setTitle('')
         setPublished('')
-        setAuhtor('')
+        setAuthor('')
         setGenres([])
         setGenre('')
     }
@@ -55,42 +55,37 @@ const NewBook = (props) => {
     return (
         <div>
             <div style={{color: 'red'}}>
-                {errors.map(error => 
-                    <span>error.message</span>
+                {errors.map((error, index) => 
+                    <span key={index}>{error.message}</span>
                 )}
             </div>
             <form onSubmit={submit}>
                 <div>
                     title
-                    <input
-                        value={title}
+                    <input value={title}
                         onChange={({ target }) => setTitle(target.value)}
                     />
                 </div>
                 <div>
                     author
-                    <input
-                        value={author}
-                        onChange={({ target }) => setAuhtor(target.value)}
+                    <input value={author}
+                        onChange={({ target }) => setAuthor(target.value)}
                     />
                 </div>
                 <div>
                     published
-                    <input
-                        type='number'
-                        value={published}
+                    <input type='number' value={published}
                         onChange={({ target }) => setPublished(+target.value)}
                     />
                 </div>
                 <div>
-                    <input
-                        value={genre}
+                    <input value={genre}
                         onChange={({ target }) => setGenre(target.value)}
                     />
                     <button onClick={addGenre} type="button">add genre</button>
                 </div>
                 <div>
-                    genres: {genres.join(' ')}
+                    genres: {genres.join(', ')}
                 </div>
                 <button type='submit'>create book</button>
             </form>
