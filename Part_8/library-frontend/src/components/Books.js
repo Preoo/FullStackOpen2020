@@ -1,38 +1,49 @@
 import React from 'react'
+import { useQuery } from '@apollo/client'
+import { BOOKS_INFO } from '../Queries'
 
 const Books = (props) => {
-  if (!props.show) {
-    return null
-  }
 
-  const books = []
+    const books = useQuery(BOOKS_INFO)
 
-  return (
-    <div>
-      <h2>books</h2>
+    if (!props.show) {
+        return null
+    }
 
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>
-              author
-            </th>
-            <th>
-              published
-            </th>
-          </tr>
-          {books.map(a =>
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author}</td>
-              <td>{a.published}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  )
+    if (books.loading) {
+        return (
+            <>
+                loading books info...
+            </>
+        )
+    }
+
+    return (
+        <div>
+            <h2>books</h2>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <th>
+                            author
+                        </th>
+                        <th>
+                            published
+                        </th>
+                    </tr>
+                    {books.data.allBooks.map(a =>
+                        <tr key={a.title}>
+                            <td>{a.title}</td>
+                            <td>{a.author}</td>
+                            <td>{a.published}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    )
 }
 
 export default Books

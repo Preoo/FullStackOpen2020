@@ -13,7 +13,7 @@ const Authors = (props) => {
     if (authors.loading) {
         return (
             <>
-            loading author info...
+                loading author info...
             </>
         )
     }
