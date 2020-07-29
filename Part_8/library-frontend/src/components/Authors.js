@@ -1,38 +1,48 @@
-  
+
 import React from 'react'
+import { useQuery } from '@apollo/client'
+import { AUTHOR_INFO } from '../Queries'
 
 const Authors = (props) => {
-  if (!props.show) {
-    return null
-  }
-  const authors = []
+    const authors = useQuery(AUTHOR_INFO)
 
-  return (
-    <div>
-      <h2>authors</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>
-              born
-            </th>
-            <th>
-              books
-            </th>
-          </tr>
-          {authors.map(a =>
-            <tr key={a.name}>
-              <td>{a.name}</td>
-              <td>{a.born}</td>
-              <td>{a.bookCount}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    if (!props.show) {
+        return null
+    }
 
-    </div>
-  )
+    if (authors.loading) {
+        return (
+            <>
+            loading author info...
+            </>
+        )
+    }
+
+    return (
+        <div>
+            <h2>authors</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <th>
+                            born
+                        </th>
+                        <th>
+                            books
+                        </th>
+                    </tr>
+                    {authors.data.allAuthors.map(a =>
+                        <tr key={a.name}>
+                            <td>{a.name}</td>
+                            <td>{a.born}</td>
+                            <td>{a.bookCount}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    )
 }
 
 export default Authors
