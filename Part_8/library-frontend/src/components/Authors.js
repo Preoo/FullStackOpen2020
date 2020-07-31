@@ -66,7 +66,7 @@ const Authors = (props) => {
             </table>
             <form onSubmit={handleAuthorEdit}>
                 <select value={editedAuthorName}
-                    onChange={e => setEditedAuthor(e.target.value)}
+                    onChange={({ target }) => setEditedAuthor(target.value)}
                 >
                     {authors.data.allAuthors.map(author =>
                         <option key={author.name} value={author.name}>
