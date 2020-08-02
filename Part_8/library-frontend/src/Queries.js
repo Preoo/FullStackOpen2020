@@ -60,3 +60,11 @@ mutation login($username: String!, $password: String!) {
   }
 }
 `
+export const USER_INFO = gql`
+query {
+  me {
+    username
+    favourite
+  }
+}
+`

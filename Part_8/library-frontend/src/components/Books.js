@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
-import { BOOKS_INFO } from '../Queries'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { BOOKS_INFO, USER_INFO } from '../Queries'
 
 const Books = (props) => {
     const books = useQuery(BOOKS_INFO)
     const [filter, setFilter] = useState('')
     const [genres, setGenres] = useState([])
+    const client = useApolloClient()
 
     useEffect(() => {
         if (books.data) {
@@ -14,6 +15,20 @@ const Books = (props) => {
             setGenres([...new Set(genresArray)])
         }
     }, [books.data])
+
+    const setUserFavGenre = genre => {
+        setFilter(genre)
+        try {
+            const userInfo = client.readQuery({ query: USER_INFO })
+            client.writeQuery({
+                query: USER_INFO,
+                data: { ...userInfo, me: { ...userInfo.me, favourite: genre }}
+            })
+        } catch (ex) {
+            // console.error(ex)
+            console.log('user is not logged in')
+        }
+    }
 
     if (!props.show) {
         return null
@@ -54,9 +69,9 @@ const Books = (props) => {
                 </tbody>
             </table>
             {genres.map((genre, index) => (
-                <button key={index} onClick={() => setFilter(genre)}>{genre}</button>
+                <button key={index} onClick={() => setUserFavGenre(genre)}>{genre}</button>
             ))}
-            <button onClick={() => setFilter('')}>any</button>
+            <button onClick={() => setUserFavGenre('')}>any</button>
         </div>
     )
 }

@@ -3,8 +3,9 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { useMutation, useApolloClient } from '@apollo/client'
-import { USER_LOGIN } from './Queries'
+import { useMutation, useApolloClient, useLazyQuery } from '@apollo/client'
+import { USER_LOGIN, USER_INFO } from './Queries'
+import Suggested from './components/Suggested'
 
 const Errors = ({ errors }) => (
     <>
@@ -19,6 +20,7 @@ const App = () => {
     const [page, setPage] = useState('authors')
     const [token, setToken] = useState(null)
     const [errors, setErrors] = useState([])
+    const [getUserFavGenre] = useLazyQuery(USER_INFO)
     const [loginQuery, loginResult] = useMutation(USER_LOGIN, {
         onError: error => setErrors(error.graphQLErrors)
     })
@@ -30,13 +32,10 @@ const App = () => {
             setToken(userToken)
             // console.log(token)
             localStorage.setItem('library-user-token', userToken)
+            getUserFavGenre()
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loginResult.data])
-
-    // useEffect(() => {
-    //     console.log(`token state: ${token}`)
-    // }, [token])
 
     const login = (creds) => {
         setErrors([])
@@ -57,14 +56,15 @@ const App = () => {
                 <button onClick={() => setPage('books')}>books</button>
                 {token === null && <button onClick={() => setPage('login')}>login</button>}
                 {token !== null && <button onClick={() => setPage('add')}>add book</button>}
+                {token !== null && <button onClick={() => setPage('suggested')}>for your pleasure</button>}
                 {token !== null && <button onClick={() => logout()}>logout</button>}
-                {/* <button onClick={() => logout()}>reset</button> */}
             </div>
 
             <Authors show={page === 'authors'} />
             <Books show={page === 'books'} />
             <NewBook show={page === 'add'} setErrors={setErrors} />
             { page === 'login' && <LoginForm handleLogin={login} />}
+            { (page === 'suggested' && token) && <Suggested />}
         </div>
     )
 }
