@@ -12,10 +12,12 @@ query {
 export const BOOKS_INFO = gql`
 query {
     allBooks { 
-        title 
-        author
-        published 
+        title
+        published
         genres
+        author {
+          name
+        }
     }
   }
 `

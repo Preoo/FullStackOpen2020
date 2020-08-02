@@ -104,6 +104,7 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError('not authenticated')
             }
+
             let author = await Author.findOne({ name: args.author })
             if (!author) {
                 try {
@@ -131,6 +132,7 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError('not authenticated')
             }
+
             if (!args.born) return null
 
             const author = await Author
