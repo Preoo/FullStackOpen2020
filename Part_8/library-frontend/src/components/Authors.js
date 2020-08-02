@@ -5,17 +5,14 @@ import { AUTHOR_INFO, EDIT_AUTHOR } from '../Queries'
 
 const Authors = (props) => {
     const authors = useQuery(AUTHOR_INFO)
+    const [editedAuthorName, setEditedAuthor] = useState('')
+    const [editedBorn, setEditedBorn] = useState('')
 
     const [editAuthor] = useMutation(EDIT_AUTHOR, {
         refetchQueries: [
-            { 
-                query: AUTHOR_INFO
-            }
+            { query: AUTHOR_INFO }
         ]}
     )
-
-    const [editedAuthorName, setEditedAuthor] = useState('')
-    const [editedBorn, setEditedBorn] = useState('')
 
     const handleAuthorEdit = event => {
         event.preventDefault()
@@ -33,7 +30,7 @@ const Authors = (props) => {
         return null
     }
 
-    if (authors.loading) {
+    if (authors.loading || !authors.data) {
         return (
             <>
                 loading author info...
@@ -66,17 +63,19 @@ const Authors = (props) => {
             </table>
             <form onSubmit={handleAuthorEdit}>
                 <select value={editedAuthorName}
+                    onSelect={({ target }) => setEditedAuthor(target.value)}
                     onChange={({ target }) => setEditedAuthor(target.value)}
                 >
+                    <option hidden>select author</option>
                     {authors.data.allAuthors.map(author =>
-                        <option key={author.name} value={author.name}>
+                        <option key={author.name} value={author.name} >
                             {author.name}
                         </option>
                     )}
                 </select>
                 <input type='number' value={editedBorn}
                     onChange={({ target }) => setEditedBorn(+target.value)} />
-                <button type='submit'>edit</button>
+                <button type='submit' disabled={editedAuthorName === ''}>edit</button>
             </form>
         </div>
     )

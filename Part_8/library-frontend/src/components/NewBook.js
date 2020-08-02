@@ -9,8 +9,6 @@ const NewBook = (props) => {
     const [genre, setGenre] = useState('')
     const [genres, setGenres] = useState([])
 
-    const [errors, setErrors] = useState([])
-
     const [addNewBook] = useMutation(ADD_BOOK, {
         refetchQueries: [
             { 
@@ -20,7 +18,7 @@ const NewBook = (props) => {
                 query: BOOKS_INFO
             }
         ],
-        onError: (error) => setErrors(error.graphQLErrors)
+        onError: (error) => props.setErrors(error.graphQLErrors)
     })
 
     if (!props.show) {
@@ -54,11 +52,6 @@ const NewBook = (props) => {
 
     return (
         <div>
-            <div style={{color: 'red'}}>
-                {errors.map((error, index) => 
-                    <span key={index}>{error.message}</span>
-                )}
-            </div>
             <form onSubmit={submit}>
                 <div>
                     title
