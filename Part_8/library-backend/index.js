@@ -1,6 +1,6 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server')
 const mongoose = require('mongoose')
 
 const Book = require('./models/book')
@@ -78,7 +78,12 @@ const typeDefs = gql`
             password: String!
         ): Token
     }
+    type Subscription {
+        bookAdded: Book!
+    }
 `
+
+const pubsub = new PubSub()
 
 const resolvers = {
     Query: {
@@ -95,9 +100,6 @@ const resolvers = {
         allUsers: () => User.find({}),
         me: (root, args, context) => context.currentUser
     },
-    Author: {
-        bookCount: (root) => Book.find({ author: root }).countDocuments()
-    },
     Mutation: {
         addBook: async (root, args, context) => {
             const currentUser = context.currentUser
@@ -108,13 +110,16 @@ const resolvers = {
             let author = await Author.findOne({ name: args.author })
             if (!author) {
                 try {
-                    author = new Author({ name: args.author })
+                    author = new Author({ name: args.author, bookCount: 1 })
                     await author.save()
                 } catch (e) {
                     throw new UserInputError(e.message, {
                         invalidArgs: args
                     })
                 }
+            } else {
+                author.bookCount++
+                await author.save()
             }
 
             const book = new Book({ ...args, author: author })
@@ -125,6 +130,9 @@ const resolvers = {
                     invalidArgs: args
                 })
             }
+
+            pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
             return book
         },
         editAuthor: async (root, args, context) => {
@@ -140,8 +148,8 @@ const resolvers = {
             return author || null
         },
         clearDB: async () => {
-            const countBooks = await Book.remove({})
-            const countAuthors = await Author.remove({})
+            const countBooks = await Book.deleteMany({})
+            const countAuthors = await Author.deleteMany({})
             const report = `Removed ${countBooks.deletedCount} books and ${countAuthors.deletedCount} authors`
             return report
         },
@@ -168,6 +176,11 @@ const resolvers = {
                 value: jwt.sign(token, JWT_SECRET)
             }
         }
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+        }
     }
 }
 
@@ -184,6 +197,7 @@ const server = new ApolloServer({
     }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
     console.log(`Server ready at ${url}`)
+    console.log(`Subscriptions read at ${subscriptionsUrl}`)
 })

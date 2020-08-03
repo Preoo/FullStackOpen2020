@@ -23,7 +23,7 @@ Go to corresponding Part\_n folder. Run command
 
 	npm init react-app  app-name-here --template typescript
 
-which will create a folder with supplied app-name in working directory and initilize the project. 
+which will create a folder with supplied app-name in working directory and initializing the project. 
 
 ## MongoDB
 Diverging from course material, I will use self-hosted Docker container named `fullstack_mongo` to house database.
