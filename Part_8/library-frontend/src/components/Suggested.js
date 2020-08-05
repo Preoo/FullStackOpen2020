@@ -1,12 +1,8 @@
 import React from 'react'
-import { useQuery } from '@apollo/client'
-import { BOOKS_INFO, USER_INFO } from '../Queries'
 
-const Suggested = (props) => {
-    const books = useQuery(BOOKS_INFO)
-    const user = useQuery(USER_INFO)
+const Suggested = ({books, genre}) => {
 
-    if (books.loading || user.loading) {
+    if (books.loading) {
         return (
             <>
                 loading ...
@@ -17,7 +13,7 @@ const Suggested = (props) => {
     return (
         <div>
             <h2>books</h2>
-            <p>in suggested genre <em>{user.data.me.favourite}</em></p>
+            <p>in suggested genre <em>{genre.data.me.favourite}</em></p>
             <table>
                 <tbody>
                     <tr>
@@ -30,7 +26,7 @@ const Suggested = (props) => {
                         </th>
                     </tr>
                     {books.data.allBooks
-                        .filter(book => book.genres.includes(user.data.me.favourite))
+                        // .filter(book => book.genres.includes(user.data.me.favourite))
                         .map(a =>
                             <tr key={a.title}>
                                 <td>{a.title}</td>

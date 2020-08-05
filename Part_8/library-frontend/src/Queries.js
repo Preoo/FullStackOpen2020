@@ -17,7 +17,6 @@ fragment BookDetails on Book {
   }
 }
 `
-
 export const AUTHOR_INFO = gql`
 query {
   allAuthors {
@@ -28,7 +27,7 @@ ${AUTHOR_DETAILS}
 `
 export const BOOKS_INFO = gql`
 query {
-  allBooks { 
+  allBooks(genre: "") { 
     ...BookDetails
   }
 }
@@ -79,6 +78,16 @@ query {
 export const BOOK_ADDED = gql`
 subscription {
   bookAdded {
+    ...BookDetails
+  }
+}
+${BOOK_DETAILS}
+`
+export const BOOKS_BY_GENRE = gql`
+query allBooks($genre: String) {
+  allBooks(
+    genre: $genre
+  ) { 
     ...BookDetails
   }
 }

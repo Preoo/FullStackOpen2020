@@ -3,8 +3,8 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { useMutation, useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
-import { USER_LOGIN, USER_INFO, BOOK_ADDED, BOOKS_INFO } from './Queries'
+import { useQuery, useMutation, useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
+import { USER_LOGIN, USER_INFO, BOOK_ADDED, BOOKS_INFO, BOOKS_BY_GENRE } from './Queries'
 import Suggested from './components/Suggested'
 
 const Errors = ({ errors }) => (
@@ -20,10 +20,15 @@ const App = () => {
     const [page, setPage] = useState('authors')
     const [token, setToken] = useState(null)
     const [errors, setErrors] = useState([])
-    const [getUserFavGenre] = useLazyQuery(USER_INFO)
+
+    const books = useQuery(BOOKS_INFO)
+    const [getSuggested, suggestedResults] = useLazyQuery(BOOKS_BY_GENRE)
+
+    const [getUser, getUserResults] = useLazyQuery(USER_INFO)
     const [loginQuery, loginResult] = useMutation(USER_LOGIN, {
         onError: error => setErrors(error.graphQLErrors)
     })
+
     const updateCache = (object, onQuery, onKey) => {
         const cacheContains = (cache, object) =>
             cache.map(c => c.title).includes(object.title)
@@ -35,7 +40,6 @@ const App = () => {
                 data: { [onKey]: dataStore[onKey].concat(object) }
             })
         }
-        console.log(client.readQuery({ query: onQuery }))
     }
     useSubscription(BOOK_ADDED, {
         onSubscriptionData: ({ subscriptionData }) => {
@@ -46,23 +50,47 @@ const App = () => {
     })
 
     useEffect(() => {
+        const token = localStorage.getItem('library-user-token')
+        if (token) {
+            setToken(token)
+            getUser()
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
         if (loginResult.data && loginResult.data.login.value) {
             const userToken = loginResult.data.login.value
-            // console.log(userToken)
             setToken(userToken)
-            // console.log(token)
             localStorage.setItem('library-user-token', userToken)
-            getUserFavGenre()
+            getUser()
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loginResult.data])
+
+    useEffect(() => {
+        if (books.data && getUserResults.data) {
+            if (suggestedResults.data) {
+                suggestedResults.refetch({
+                    genre: getUserResults.data.me.favourite
+                })
+            } else {
+                getSuggested({
+                    variables: {
+                        genre: getUserResults.data.me.favourite
+                    }
+                })
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [books.data, getUserResults.data])
 
     const login = (creds) => {
         setErrors([])
         loginQuery({ variables: creds })
     }
     const logout = () => {
-        // send query to server to mutate user.favourite
+        // TODO: send query to server to mutate user.favourite
         setToken(null)
         setErrors([])
         localStorage.clear()
@@ -82,10 +110,10 @@ const App = () => {
             </div>
 
             <Authors show={page === 'authors'} />
-            <Books show={page === 'books'} />
+            <Books show={page === 'books'} books={books} />
             <NewBook show={page === 'add'} setErrors={setErrors} />
             { page === 'login' && <LoginForm handleLogin={login} />}
-            { (page === 'suggested' && token) && <Suggested />}
+            { (page === 'suggested' && token) && <Suggested books={suggestedResults} genre={getUserResults}/>}
         </div>
     )
 }

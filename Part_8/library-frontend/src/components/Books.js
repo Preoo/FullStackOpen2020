@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useApolloClient } from '@apollo/client'
-import { BOOKS_INFO, USER_INFO } from '../Queries'
+import { useApolloClient } from '@apollo/client'
+import { USER_INFO } from '../Queries'
 
-const Books = (props) => {
-    const books = useQuery(BOOKS_INFO)
+const Books = ({ show, books }) => {
+    // const books = useQuery(BOOKS_INFO)
     const [filter, setFilter] = useState('')
     const [genres, setGenres] = useState([])
     const client = useApolloClient()
 
     useEffect(() => {
         if (books.data) {
-            const reducer = (a, c) => [...a, ...c.genres]
-            const genresArray = books.data.allBooks.reduce(reducer, [])
-            setGenres([...new Set(genresArray)])
+            const mergeGenres = (a, c) => [...a, ...c.genres]
+            const genres = books.data.allBooks.reduce(mergeGenres, [])
+            setGenres([...new Set(genres)]) // de-duplicate with Set
         }
     }, [books.data])
 
@@ -30,7 +30,7 @@ const Books = (props) => {
         }
     }
 
-    if (!props.show) {
+    if (!show) {
         return null
     }
 
