@@ -93,3 +93,13 @@ query allBooks($genre: String) {
 }
 ${BOOK_DETAILS}
 `
+export const SAVE_USER_GENRE = gql`
+mutation setUserFavourite($genre: String) {
+  setUserFavourite(
+    genre: $genre
+  ) {
+    username
+    favourite
+  }
+}
+`

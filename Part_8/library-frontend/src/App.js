@@ -4,7 +4,7 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import { useQuery, useMutation, useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
-import { USER_LOGIN, USER_INFO, BOOK_ADDED, BOOKS_INFO, BOOKS_BY_GENRE } from './Queries'
+import { USER_LOGIN, USER_INFO, BOOK_ADDED, BOOKS_INFO, BOOKS_BY_GENRE, SAVE_USER_GENRE } from './Queries'
 import Suggested from './components/Suggested'
 
 const Errors = ({ errors }) => (
@@ -26,6 +26,9 @@ const App = () => {
 
     const [getUser, getUserResults] = useLazyQuery(USER_INFO)
     const [loginQuery, loginResult] = useMutation(USER_LOGIN, {
+        onError: error => setErrors(error.graphQLErrors)
+    })
+    const [saveUserGenre] = useMutation(SAVE_USER_GENRE, {
         onError: error => setErrors(error.graphQLErrors)
     })
 
@@ -69,7 +72,7 @@ const App = () => {
     }, [loginResult.data])
 
     useEffect(() => {
-        if (books.data && getUserResults.data) {
+        if (books.data && getUserResults.data && getUserResults.data.me) {
             if (suggestedResults.data) {
                 suggestedResults.refetch({
                     genre: getUserResults.data.me.favourite
@@ -89,8 +92,9 @@ const App = () => {
         setErrors([])
         loginQuery({ variables: creds })
     }
-    const logout = () => {
-        // TODO: send query to server to mutate user.favourite
+    const logout = async () => {
+        const user = client.readQuery({ query: USER_INFO })
+        await saveUserGenre({ variables: { genre: user.me.favourite} })
         setToken(null)
         setErrors([])
         localStorage.clear()

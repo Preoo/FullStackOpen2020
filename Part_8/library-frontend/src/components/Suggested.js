@@ -2,7 +2,7 @@ import React from 'react'
 
 const Suggested = ({books, genre}) => {
 
-    if (books.loading) {
+    if (books.loading || !genre.data || !genre.data.me) {
         return (
             <>
                 loading ...

@@ -73,6 +73,9 @@ const typeDefs = gql`
             username: String!
             favourite: String
         ): User
+        setUserFavourite(
+            genre: String
+        ): User
         login(
             username: String!
             password: String!
@@ -161,6 +164,15 @@ const resolvers = {
                         invalidArgs: args
                     })
                 })
+        },
+        setUserFavourite: async (root, args, context) => {
+            const currentUser = context.currentUser
+            if (!currentUser) {
+                throw new AuthenticationError('not authenticated')
+            }
+            currentUser.favourite = args.genre || ''
+            await currentUser.save()
+            return currentUser
         },
         login: async (root, args) => {
             const user = await User.findOne({ username: args.username })
