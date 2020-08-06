@@ -13,14 +13,25 @@ export interface ExercisesConfig {
     exerciseHours: number[]
 }
 
+export function isValidExcercisesConfig(data:unknown): data is ExercisesConfig {
+    return (
+        (data as ExercisesConfig).exerciseHours !== undefined
+        && (data as ExercisesConfig).target !== undefined
+        && !isNaN((data as ExercisesConfig).target)
+        && (data as ExercisesConfig).exerciseHours.map(Number).every(n => !isNaN(n))
+    );
+}
+
 export const buildConfig = (args:string[]): ExercisesConfig => {
     // As we cannot do a ...rest to collect all preceding vars, this will do.
     // node and script are always present from process.argv
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [node, script, targetInput, ...exercisesInput] = args;
+    const [_node, _script, targetInput, ...exercisesInput] = args;
     const target = Number(targetInput);
     const exerciseHours = exercisesInput.map(Number).filter(n =>!isNaN(n));
-    if (isNaN(target) || !exerciseHours.length) {
+    //hack get around error TS6133
+    if (isNaN(target) || !exerciseHours.length || !_node || !_script) {
         throw new Error('Invalid arguments exception: Expected atleast 2 numerical arguments');
     }
 
