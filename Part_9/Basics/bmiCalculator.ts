@@ -1,18 +1,18 @@
-interface BMIConfig {
-    weight: number,
-    height: number
-}
+// interface BMIConfig {
+//     weight: number,
+//     height: number
+// }
 
-const parseArgs = (args:string[]): BMIConfig => {
-    if (args.length !== 4) throw new Error('Invalid argument exception: expected 4 args');
-    const weight = Number(args[2]);
-    const height = Number(args[3]);
-    if (isNaN(weight) || isNaN(height)) {
-        throw new Error('Argument type exception: values are not numbers');
-    }
+// const parseArgs = (args:string[]): BMIConfig => {
+//     if (args.length !== 4) throw new Error('Invalid argument exception: expected 4 args');
+//     const weight = Number(args[2]);
+//     const height = Number(args[3]);
+//     if (isNaN(weight) || isNaN(height)) {
+//         throw new Error('Argument type exception: values are not numbers');
+//     }
 
-    return { weight, height };
-}
+//     return { weight, height };
+// }
 
 const calculateBMI = (weight:number, height:number): string => {
     const ratio = weight / Math.pow(height*0.01, 2);
@@ -24,13 +24,16 @@ const calculateBMI = (weight:number, height:number): string => {
     if (30 < ratio && ratio <= 35) return 'Obese Class I (Moderately obese)';
     if (35 < ratio && ratio <= 40) return 'Obese Class II (Severely obese)';
     if (40 < ratio) return 'Obese Class III (Very severely obese)';
-}
+    return 'Default';
+};
 
-try {
-    const config = parseArgs(process.argv);
-    console.info(`BMI results for ${config.weight}kg and ${config.height}cm are
-        ${calculateBMI(config.weight, config.height)}
-    `);
-} catch (ex) {
-    console.error(`Ooops! ${ex.message}`);
-}
+// try {
+//     const config = parseArgs(process.argv);
+//     console.info(`BMI results for ${config.weight}kg and ${config.height}cm are
+//         ${calculateBMI(config.weight, config.height)}
+//     `);
+// } catch (ex) {
+//     console.error(`Ooops! ${ex.message}`);
+// }
+
+export default calculateBMI;
