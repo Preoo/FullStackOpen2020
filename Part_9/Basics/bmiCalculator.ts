@@ -27,13 +27,4 @@ const calculateBMI = (weight:number, height:number): string => {
     return 'Default';
 };
 
-// try {
-//     const config = parseArgs(process.argv);
-//     console.info(`BMI results for ${config.weight}kg and ${config.height}cm are
-//         ${calculateBMI(config.weight, config.height)}
-//     `);
-// } catch (ex) {
-//     console.error(`Ooops! ${ex.message}`);
-// }
-
 export default calculateBMI;

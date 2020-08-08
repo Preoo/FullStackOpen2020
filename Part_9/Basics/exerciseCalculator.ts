@@ -62,11 +62,4 @@ const calculateExercises = (config:ExercisesConfig): ExerciseResults => {
     };
 };
 
-// try {
-//     const config = buildConfig(process.argv);
-//     console.info(calculateExercises(config));
-// } catch (e) {
-//     console.error(`Oooops! ${e.message}`);
-// }
-
 export default calculateExercises;
