@@ -36,6 +36,37 @@ const PatientDetailPage: React.FC = () => {
         return null;
     }
 
+    const entryListElements = () => {
+        if (!patient.entries) return null;
+        return (
+            <>
+                {patient.entries.map(entry => (
+                    <List.Item key={entry.id}>
+                        <p>
+                            <em>
+                                [{entry.date}]
+                            </em>
+                            {' '}
+                            {entry.description}
+                        </p>
+                        <List.List>
+                            {entry.diagnosisCodes && entry.diagnosisCodes.map(code => (
+                                <List.Item key={code}>
+                                    <List.Content >
+                                        <List.Header>{code}</List.Header>
+                                        <List.Description>
+                                            diagnosis description
+                                        </List.Description>
+                                    </List.Content>
+                                </List.Item>
+                            ))}
+                        </List.List>
+                    </List.Item>
+                ))}
+            </>
+        );
+    };
+
     return (
         <div className="App">
             <Container textAlign="center">
@@ -64,7 +95,7 @@ const PatientDetailPage: React.FC = () => {
             </Table>
             <h5>Entries</h5>
             <List>
-
+                {entryListElements()}
             </List>
         </div>
     );
