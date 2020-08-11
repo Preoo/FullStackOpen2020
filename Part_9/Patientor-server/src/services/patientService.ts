@@ -2,7 +2,7 @@ import rawPatients from '../../data/patients.json';
 import { Patient, SanitizedPatient, EntryPatient } from '../types';
 import { v1 as uuid1} from 'uuid';
 
-const patients = (rawPatients as Patient[]).map(p => ({...p, entries: []}));
+const patients = (rawPatients as Patient[]).map(p => ({ ...p, entries: [] }));
 
 const getPatients = (): SanitizedPatient[] => {
     const unsafePatients = patients;
