@@ -1,7 +1,20 @@
 import express from 'express';
 import patientService from '../services/patientService';
 import createPatient from '../creators/patientCreator';
+import { Entry } from '../types';
 const router = express.Router();
+
+const validateEntry = (entry: Entry): boolean => {
+    // Naive check that entry has proper type
+    switch (entry.type) {
+        case 'Hospital':
+        case 'OccupationalHealthcare':
+        case 'HealthCheck':
+            return true;
+        default:
+            return false;
+    }
+};
 
 router.get('/', (_req, res) => {
     const patients = patientService.getPatients();
@@ -11,11 +24,21 @@ router.get('/', (_req, res) => {
 router.get('/:id', (req, res) => {
     const id = req.params.id;
     const patient = patientService.getPatientFull(id);
-    if (patient) {
-        return res.json(patient);
-    } else {
-        return res.status(404).json({ error: 'No valid patients found.'});
+
+    if (!patient) {
+        return res.status(404).json({
+            error: 'No valid patient found.'
+        });
     }
+
+    // Do some light validation on patient entries. Return 500 if fails.
+    if (!patient.entries.every(entry => validateEntry(entry))) {
+        return res.status(500).json({
+            error: 'Internal server error. Invalid type of entry type.'
+        });
+    }
+
+    return res.json(patient);
 });
 
 router.post('/', (req, res) => {
