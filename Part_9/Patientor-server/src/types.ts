@@ -4,6 +4,10 @@ export type Diagnose = {
     latin?: string
 };
 
+export type Entry = {
+
+};
+
 export enum Gender {
     Male = 'male',
     Female = 'female',
@@ -17,6 +21,7 @@ export type Patient = {
     occupation: string
     ssn?: string
     dateOfBirth?: string
+    entries: Entry[]
 };
-export type SanitizedPatient = Omit<Patient, 'ssn'>;
-export type EntryPatient = Omit<Patient, 'id'>;
+export type SanitizedPatient = Omit<Patient, 'ssn' | 'entries'>;
+export type EntryPatient = Omit<Patient, 'id' | 'entries'>;
