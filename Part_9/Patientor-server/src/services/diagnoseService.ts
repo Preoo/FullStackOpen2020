@@ -1,7 +1,7 @@
 import diagnoses from '../../data/diagnoses.json';
-import { Diagnose } from '../types';
+import { Diagnosis } from '../types';
 
-const getDiagnoses = ():Diagnose[] => diagnoses as Diagnose[];
+const getDiagnoses = ():Diagnosis[] => diagnoses as Diagnosis[];
 
 export default {
     getDiagnoses
