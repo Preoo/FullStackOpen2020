@@ -9,7 +9,7 @@ import { useStateValue, updatePatient } from "../state";
 import { useParams, useHistory } from "react-router-dom";
 
 const PatientDetailPage: React.FC = () => {
-    const [{ patients }, dispatch] = useStateValue();
+    const [{ patients, diagnoses }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
     const history = useHistory();
 
@@ -55,7 +55,11 @@ const PatientDetailPage: React.FC = () => {
                                     <List.Content >
                                         <List.Header>{code}</List.Header>
                                         <List.Description>
-                                            diagnosis description
+                                                {diagnoses[code].name}
+                                                {
+                                                diagnoses[code]?.latin && 
+                                                <em>{' | '}{diagnoses[code]?.latin}</em>
+                                                }
                                         </List.Description>
                                     </List.Content>
                                 </List.Item>
