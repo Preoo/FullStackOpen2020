@@ -33,7 +33,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
 interface Discharge { date: string; criteria: string; }
 interface HospitalEntry extends BaseEntry {
     type: 'Hospital';
-    discharge: Discharge;
+    discharge?: Discharge;
 }
 
 export type Entry =

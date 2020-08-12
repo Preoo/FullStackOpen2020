@@ -1,12 +1,13 @@
 import React from "react";
 import axios from "axios";
-import { Container, Table, List } from "semantic-ui-react";
+import { Container, Table, Item } from "semantic-ui-react";
 
 import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 
 import { useStateValue, updatePatient } from "../state";
 import { useParams, useHistory } from "react-router-dom";
+import PatientEntryDetail from "../PatientEntryDetail";
 
 const PatientDetailPage: React.FC = () => {
     const [{ patients, diagnoses }, dispatch] = useStateValue();
@@ -36,41 +37,6 @@ const PatientDetailPage: React.FC = () => {
         return null;
     }
 
-    const entryListElements = () => {
-        if (!patient.entries) return null;
-        return (
-            <>
-                {patient.entries.map(entry => (
-                    <List.Item key={entry.id}>
-                        <p>
-                            <em>
-                                [{entry.date}]
-                            </em>
-                            {' '}
-                            {entry.description}
-                        </p>
-                        <List.List>
-                            {entry.diagnosisCodes && entry.diagnosisCodes.map(code => (
-                                <List.Item key={code}>
-                                    <List.Content >
-                                        <List.Header>{code}</List.Header>
-                                        <List.Description>
-                                                {diagnoses[code].name}
-                                                {
-                                                diagnoses[code]?.latin && 
-                                                <em>{' | '}{diagnoses[code]?.latin}</em>
-                                                }
-                                        </List.Description>
-                                    </List.Content>
-                                </List.Item>
-                            ))}
-                        </List.List>
-                    </List.Item>
-                ))}
-            </>
-        );
-    };
-
     return (
         <div className="App">
             <Container textAlign="center">
@@ -98,9 +64,15 @@ const PatientDetailPage: React.FC = () => {
                 </Table.Body>
             </Table>
             <h5>Entries</h5>
-            <List>
-                {entryListElements()}
-            </List>
+            <Item.Group divided>
+                {patient.entries && patient.entries.map(entry => (
+                    <PatientEntryDetail
+                        key={entry.id}
+                        entry={entry}
+                        diagnoses={entry.diagnosisCodes?.map(code => diagnoses[code])}
+                    />
+                ))}
+            </Item.Group>
         </div>
     );
 };
