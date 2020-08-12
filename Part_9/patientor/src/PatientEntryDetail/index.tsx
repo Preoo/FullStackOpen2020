@@ -1,6 +1,9 @@
 import { assertNever } from '../constants';
 import React from 'react';
-import { Entry, Diagnosis, OccupationalHealthcareEntry, HealthCheckEntry, HospitalEntry } from '../types';
+import {
+    Entry, Diagnosis, OccupationalHealthcareEntry,
+    HealthCheckEntry, HospitalEntry
+} from '../types';
 import { Item, Icon } from 'semantic-ui-react';
 
 interface EntryDetailProps { entry: Entry; diagnoses?: Diagnosis[] }
@@ -29,8 +32,8 @@ const HospitalEntryItem: React.FC<HospitalProps> = ({ entry, diagnoses }) => (
     </Item>
 );
 
-interface OccupationalHealthcareProps { entry: OccupationalHealthcareEntry; diagnoses?: Diagnosis[] }
-const OccupationalHealthcareEntryItem: React.FC<OccupationalHealthcareProps> = ({ entry, diagnoses }) => (
+interface OccupationalProps { entry: OccupationalHealthcareEntry; diagnoses?: Diagnosis[] }
+const OccupationalEntryItem: React.FC<OccupationalProps> = ({ entry, diagnoses }) => (
     <Item>
         <Item.Content>
             <Item.Header>
@@ -95,7 +98,7 @@ const PatientEntryDetail: React.FC<EntryDetailProps> = ({ entry, diagnoses }) =>
         case 'Hospital':
             return <HospitalEntryItem entry={entry} diagnoses={diagnoses} />;
         case 'OccupationalHealthcare':
-            return <OccupationalHealthcareEntryItem entry={entry} diagnoses={diagnoses} />;
+            return <OccupationalEntryItem entry={entry} diagnoses={diagnoses} />;
         case 'HealthCheck':
             return <HealthCheckEntryItem entry={entry} diagnoses={diagnoses} />;
         default: return assertNever(entry);
