@@ -1,4 +1,4 @@
-import { Patient, SanitizedPatient, EntryPatient } from '../types';
+import { Patient, SanitizedPatient, EntryPatient, Entry } from '../types';
 import { v1 as uuid1} from 'uuid';
 // Seed data
 import patients from './patients';
@@ -41,8 +41,20 @@ const addPatient = (patient: EntryPatient): SanitizedPatient => {
     };
 };
 
+const addEntry = (patientId: string, entry: Entry): Patient | undefined => {
+
+    const patient = patients.find(p => p.id === patientId);
+    if (patient) {
+        patient.entries.push(entry);
+        return patient;
+    } else {
+        return undefined;
+    }
+};
+
 export default {
     getPatients,
     getPatientFull,
-    addPatient
+    addPatient,
+    addEntry
 };

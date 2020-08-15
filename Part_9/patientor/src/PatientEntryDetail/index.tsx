@@ -23,9 +23,9 @@ const HospitalEntryItem: React.FC<HospitalProps> = ({ entry, diagnoses }) => (
             </Item.Description>
             <Item.Extra>
                 {diagnoses?.map(diagnosis => 
-                    <span>
+                    <p key={diagnosis.code}>
                         [ {diagnosis.code} ] - {diagnosis.name}
-                    </span>
+                    </p>
                 )}
             </Item.Extra>
         </Item.Content>
@@ -54,7 +54,7 @@ const OccupationalEntryItem: React.FC<OccupationalProps> = ({ entry, diagnoses }
             </Item.Description>
             <Item.Extra>
                 {diagnoses?.map(diagnosis => 
-                    <p>
+                    <p key={diagnosis.code}>
                         [ {diagnosis.code} ] - {diagnosis.name}
                     </p>
                 )}
@@ -84,7 +84,7 @@ const HealthCheckEntryItem: React.FC<HealthCheckProps> = ({ entry, diagnoses }) 
             </Item.Description>
             <Item.Extra>
                 {diagnoses?.map(diagnosis => 
-                    <p>
+                    <p key={diagnosis.code}>
                         [ {diagnosis.code} ] - {diagnosis.name}
                     </p>
                 )}

@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Container, Table, Item } from "semantic-ui-react";
+import { Container, Table, Item, Button } from "semantic-ui-react";
 
 import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
@@ -8,13 +8,43 @@ import { apiBaseUrl } from "../constants";
 import { useStateValue, updatePatient } from "../state";
 import { useParams, useHistory } from "react-router-dom";
 import PatientEntryDetail from "../PatientEntryDetail";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
+import AddEntryModal from '../AddEntryModal';
+
+
 
 const PatientDetailPage: React.FC = () => {
     const [{ patients, diagnoses }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
     const history = useHistory();
 
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string | undefined>();
+    
+    const openModal = (): void => setModalOpen(true);
+    const closeModal = (): void => {
+      setModalOpen(false);
+      setError(undefined);
+    };
+
+
     const patient = patients[id];
+
+    const handleEntrySubmit = async (values: EntryFormValues) => {
+        console.info('handleSumbit');
+        console.info(values);
+        try {
+            const { data: updatedPatient } = await axios.post<Patient>(
+                `${apiBaseUrl}/patients/${id}/entries`,
+                values
+            );
+            dispatch(updatePatient(updatedPatient));
+            setError(undefined);
+        } catch (e) {
+            console.error(e.response);
+            setError(e.response.data.error);
+        }
+    };
 
     React.useEffect(() => {
         const fetchPatientDetails = async () => {
@@ -63,7 +93,13 @@ const PatientDetailPage: React.FC = () => {
                     </Table.Row>
                 </Table.Body>
             </Table>
-            <h5>Entries</h5>
+            <AddEntryModal
+                modalOpen={modalOpen}
+                onSubmit={handleEntrySubmit}
+                error={error}
+                onClose={closeModal}
+            />
+            <h5>Entries <Button onClick={() => openModal()}>Add New Entry</Button></h5>
             <Item.Group divided>
                 {patient.entries && patient.entries.map(entry => (
                     <PatientEntryDetail

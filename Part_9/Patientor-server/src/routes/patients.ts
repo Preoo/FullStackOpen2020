@@ -2,6 +2,7 @@ import express from 'express';
 import patientService from '../services/patientService';
 import createPatient from '../creators/patientCreator';
 import { Entry } from '../types';
+import createEntry from '../creators/entryCreator';
 const router = express.Router();
 
 const validateEntry = (entry: Entry): boolean => {
@@ -42,8 +43,28 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const newPatient = patientService.addPatient(createPatient(req.body));
-    res.json(newPatient);
+    try {
+        const newPatient = patientService.addPatient(createPatient(req.body));
+        return res.json(newPatient);
+    } catch (e) {
+        return res.status(400).json({ error: 'Patient entry was invalid.' });
+    }
+});
+
+router.post('/:id/entries', (req, res) => {
+    const id = req.params.id;
+    try {
+        const updatedPatient = patientService.addEntry(id, createEntry(req.body));
+        if (updatedPatient) {
+            return res.json(updatedPatient);
+        } else {
+            return res.status(404).json({
+                error: 'No valid patient found.'
+            });
+        }
+    } catch (e) {
+        return res.status(400).json({ error: 'Entry fields validation failed.' });
+    }
 });
 
 export default router;

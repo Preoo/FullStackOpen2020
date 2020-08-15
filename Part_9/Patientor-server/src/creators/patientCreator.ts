@@ -53,7 +53,7 @@ const parseSSN = (ssn: any): string => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const createPatient = (body: any):EntryPatient => {
+const createPatient = (body: any): EntryPatient => {
     return {
         name: parseName(body.name),
         gender: parseGender(body.gender),

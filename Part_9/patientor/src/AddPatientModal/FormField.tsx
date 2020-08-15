@@ -1,7 +1,7 @@
 import React from "react";
 import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
 import { Dropdown, DropdownProps, Form } from "semantic-ui-react";
-import { Diagnosis, Gender } from "../types";
+import { Diagnosis, Gender, EntryType } from "../types";
 
 // structure of a single option
 export type GenderOption = {
@@ -9,11 +9,21 @@ export type GenderOption = {
   label: string;
 };
 
+export type StringOption = {
+  value: string;
+  label: string;
+};
+
+export type EntryTypeOptions = {
+  value: EntryType;
+  label: string;
+};
+
 // props for select field component
 type SelectFieldProps = {
   name: string;
   label: string;
-  options: GenderOption[];
+  options: Array<GenderOption | StringOption | EntryTypeOptions>;
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
